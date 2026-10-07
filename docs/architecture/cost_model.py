@@ -233,7 +233,30 @@ def fmt(usd):
     return f"{usd:,.0f}"
 
 
+def summary():
+    """Key figures in SAR, used by docs/commercial/build_pricing_deck.js."""
+    launch = sum(total(b) for b in ("Platform (control plane, prod)", "Staging environment",
+                                    "Pooled cell (fixed base)"))
+    pooled = BLOCKS["Pooled cell (fixed base)"]
+    return {
+        "blocks": {k: round(total(k) * SAR) for k in BLOCKS},
+        "business": {n: round(business_cost(*s) * SAR) for n, s in BUSINESS.items()},
+        "dedicated": {z: round((total(f"Dedicated cell {z} (Enterprise)")
+                                + total(f"DR warm standby {z} (Jeddah)")) * SAR) for z in "SML"},
+        "book": {n: {"price": p, "cost": round(c * SAR), "margin": round((p - c * SAR) / p * 100)}
+                 for n, (p, c) in price_book().items()},
+        "launch": round(launch * SAR),
+        "pg_share": round(pooled["Cell PostgreSQL HA, 4 OCPU / 64 GB x2, 500 GB"]
+                          / total("Pooled cell (fixed base)") * 100),
+    }
+
+
 if __name__ == "__main__":
+    import json
+    import sys
+    if "--json" in sys.argv:
+        print(json.dumps(summary()))
+        sys.exit()
     for name, items in BLOCKS.items():
         print(f"\n## {name}")
         for item, cost in items.items():
