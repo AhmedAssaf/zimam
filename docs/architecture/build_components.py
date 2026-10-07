@@ -30,7 +30,7 @@ PICTOS = [
     "users", "user-cog", "smartphone", "receipt", "lock-keyhole", "package-check",
     "refresh-cw", "shield-check", "key-round", "cable", "database", "credit-card",
     "file-check", "fingerprint", "message-square", "building-2", "archive", "copy",
-    "landmark",
+    "landmark", "headset", "radar", "shield-alert",
 ]
 ALLOWED = re.compile(r"^\s*(<(path|circle|rect|line|polyline|polygon|ellipse)\b[^<>]*/>\s*)*$")
 
@@ -159,7 +159,7 @@ def diagram():
     g.append(node(c2, 344, W, "package-check", "Image registry",
                   [("tool", "OCI Registry + Trivy"), ("why", "signed images, scanned SPIs")]))
     g.append(node(c3, 344, W, "terraform", "Cell provisioner",
-                  [("tool", "Terraform · Resource Mgr"), ("why", "identical, repeatable cells")], build=True))
+                  [("tool", "Terraform · Resource Mgr"), ("why", "policy-checked, drift-detected")], build=True))
 
     g.append(arrow("M204,138 H264", "sign up", 234, 131, "middle"))
     g.append(step(1, 234, 152))
@@ -176,6 +176,18 @@ def diagram():
     g.append(card(940, 218, 200, "file-check", "ZATCA Fatoora", "mandatory e-invoicing"))
     g.append(arrow("M878,138 H938", "charge SAR", 908, 131, "middle"))
     g.append(arrow("M878,172 H912 V250 H938", "e-invoice", 916, 206))
+
+    # Security operations (Zimam-owned)
+    g.append(zone(1170, 40, 230, 432, "shield-check", "SECURITY OPERATIONS"))
+    g.append(node(1193, 84, W, "headset", "24/7 SOC",
+                  [("tool", "Saudi MSSP under contract"), ("why", "Zimam stays accountable")]))
+    g.append(node(1193, 214, W, "radar", "SIEM",
+                  [("tool", "Logging Analytics / Wazuh"), ("why", "immutable logs, detections")]))
+    g.append(node(1193, 344, W, "shield-alert", "Security posture",
+                  [("tool", "Cloud Guard · VSS · Kyverno"), ("why", "drift, vulns, policy checks")]))
+    g.append(arrow("M878,300 H1191", "security events", 1035, 316, "middle"))
+    g.append(arrow("M1285,214 V194", "alerts", 1293, 208))
+    g.append(arrow("M1285,344 V324", "findings", 1293, 338))
 
     # Platform <-> cells
     g.append(head(262, 486, "▲ CELLS ONLY CALL OUT (mTLS)"))

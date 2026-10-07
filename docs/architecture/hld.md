@@ -130,6 +130,10 @@ flowchart TB
 | Secrets and keys | DB credentials, signing keys, master key per cell; BYOK for Gov | OCI Vault (HSM for dedicated) | Use (managed) |
 | Observability | SLA metrics, alerts, per-tenant audit log export | Prometheus, Grafana, Fluent Bit, OCI Logging | Use |
 | Staff access | Staff MFA, recorded and time-limited production sessions | Zimam's own Keycloak, OCI Bastion | Use |
+| SIEM | Central security event analysis, detections, immutable archive | OCI Logging Analytics or Wazuh, Object Storage retention lock | Use |
+| 24/7 SOC | Continuous monitoring and escalation, Saudi security staff | NCA-licensed Saudi MSSP (Zimam accountable) | Partner |
+| Security posture | Misconfiguration, vulnerabilities, admission and runtime policy | Cloud Guard, Vulnerability Scanning, Kyverno, Falco | Use |
+| Infrastructure as code | CIS-aligned foundation, policy checks before apply, drift detection | OCI Core Landing Zone, Terraform, Checkov, OPA | Use + build modules |
 
 ## 5. Deployment view
 
@@ -261,6 +265,9 @@ Noisy-neighbour limits on pooled cells: per-realm rate limits at the edge, a max
 - **Staff access:** SSO with MFA, time-limited sessions through OCI Bastion, every session recorded; no standing production access.
 - **Audit:** admin and login events are tagged with the tenant ID and exportable to the customer's SIEM. Every platform change goes through Git review.
 - **Frameworks to evidence:** NCA ECC and CCC, PDPL (SDAIA), CST cloud regulatory framework (CSP registration), SAMA cybersecurity framework for banking customers, ISO 27001 as baseline certification.
+- **Security monitoring:** platform SIEM with an immutable log archive, a 24/7 SOC through a Saudi MSSP under Zimam's accountability, and managed threat detection on every customer realm. CCC-2:2024 2-11-P-1-5 requires SIEM coverage of the full stack.
+- **Data localization:** CCC-2:2024 moved localization controls to NDMO (SDAIA). Zimam still keeps everything in the Kingdom by design.
+- **Details:** control-by-control mapping, SIEM design, IaC pipeline and the responsibility model are in [security-compliance.md](security-compliance.md). Operational, product and business gaps are tracked in [gap-analysis.md](gap-analysis.md).
 
 ## 9. Non-functional requirements (proposed)
 

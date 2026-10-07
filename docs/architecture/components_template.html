@@ -151,6 +151,11 @@
 
           <tr class="grp"><th colspan="4">Operations and recovery</th></tr>
           <tr><td class="need">Observability</td><td class="tool">Prometheus · Grafana · OCI Logging</td><td>SLA tracking, alerting, per-tenant audit log export to customer SIEMs</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">SIEM</td><td class="tool">OCI Logging Analytics or Wazuh</td><td>NCA CCC 2-11-P-1-5 requires SIEM monitoring of the full stack; logs stay in the Kingdom with an immutable archive</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">24/7 SOC</td><td class="tool">NCA-licensed Saudi MSSP</td><td>Round-the-clock monitoring with Saudi security staff (CCC 1-4-P-1-1); Zimam stays accountable</td><td><span class="chip">Partner</span></td></tr>
+          <tr><td class="need">Privileged access</td><td class="tool">OCI Bastion or Teleport</td><td>MFA, time-bound access and recorded sessions for every staff action in production (CCC 2-2-P-1)</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Security posture</td><td class="tool">Cloud Guard · Vulnerability Scanning · Kyverno · Falco</td><td>Monthly external and quarterly internal vulnerability cycles (CCC 2-9-P-1-1), admission and runtime policy</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Policy as code</td><td class="tool">OCI Core Landing Zone · Checkov · OPA</td><td>CIS-aligned foundation; insecure infrastructure is blocked before apply</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
           <tr><td class="need">Public status page</td><td class="tool">Upptime or similar</td><td>Every competitor reviewed publishes one; buyers expect it</td><td><span class="chip">Open source</span></td></tr>
           <tr><td class="need">Disaster recovery</td><td class="tool">Object Storage replication · PostgreSQL replica in Jeddah</td><td>Off-region backups for every tier; warm standby for Enterprise and the Business DR add-on</td><td><span class="chip oci">OCI managed</span></td></tr>
         </tbody>
