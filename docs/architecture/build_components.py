@@ -6,6 +6,8 @@ as SVG symbols, and writes a self-contained HTML page. Run from anywhere:
     python docs/architecture/build_components.py
 
 Icons are cached in .icon-cache/ next to this script (git-ignored).
+Cost tags and the cost tables come from cost_model.py, so the page always
+matches hld-managed-services-costs.md.
 """
 import pathlib
 import re
@@ -13,6 +15,8 @@ import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import cost_model as cm  # noqa: E402
 CACHE = HERE / ".icon-cache"
 OUT = HERE / "zimam-components.html"
 
@@ -30,7 +34,7 @@ PICTOS = [
     "users", "user-cog", "smartphone", "receipt", "lock-keyhole", "package-check",
     "refresh-cw", "shield-check", "key-round", "cable", "database", "credit-card",
     "file-check", "fingerprint", "message-square", "building-2", "archive", "copy",
-    "landmark", "headset", "radar", "shield-alert",
+    "landmark", "headset", "radar", "shield-alert", "tag",
 ]
 ALLOWED = re.compile(r"^\s*(<(path|circle|rect|line|polyline|polygon|ellipse)\b[^<>]*/>\s*)*$")
 
@@ -116,6 +120,23 @@ def arrow(d, label=None, lx=0, ly=0, anchor="start", dash=False, both=False, rot
     return s
 
 
+def pill(right, cy, lines):
+    """Cost tag, right-aligned at `right`, vertically centred on `cy`."""
+    w = max(len(t) for t in lines) * 6.0 + 34
+    h = 8 + 14 * len(lines)
+    x, y = right - w, cy - h / 2
+    s = [f'<g><rect class="cost" x="{x}" y="{y}" width="{w}" height="{h}" rx="{min(h / 2, 11)}"/>',
+         f'<use class="ci" href="#i-tag" x="{x + 9}" y="{cy - 6}" width="12" height="12"/>']
+    for i, t in enumerate(lines):
+        s.append(f'<text class="ct" x="{x + 27}" y="{y + 15 + 14 * i}">{esc(t)}</text>')
+    s.append("</g>")
+    return "".join(s)
+
+
+def usd(v):
+    return f"{v:,.0f}"
+
+
 def step(n, x, y):
     return (f'<g class="step"><circle cx="{x}" cy="{y}" r="9"/>'
             f'<text x="{x}" y="{y + 4}" text-anchor="middle">{n}</text></g>')
@@ -149,7 +170,7 @@ def diagram():
     g.append(node(c3, 84, W, "receipt", "Billing & metering",
                   [("tool", "Lago, self-hosted in KSA"), ("why", "MAU, instance, add-on plans")]))
     g.append(node(c1, 214, W, "lock-keyhole", "Staff access",
-                  [("tool", "Zimam Keycloak + Bastion"), ("why", "MFA, recorded sessions")]))
+                  [("tool", "OCI Identity Domains + Bastion"), ("why", "MFA, recorded sessions")]))
     g.append(node(c2, 214, W, "postgresql", "Control-plane DB",
                   [("tool", "OCI Database PostgreSQL"), ("why", "tenants, plans, jobs, audit")]))
     g.append(node(c3, 214, W, "grafana", "Observability",
@@ -182,7 +203,7 @@ def diagram():
     g.append(node(1193, 84, W, "headset", "24/7 SOC",
                   [("tool", "Saudi MSSP under contract"), ("why", "Zimam stays accountable")]))
     g.append(node(1193, 214, W, "radar", "SIEM",
-                  [("tool", "Logging Analytics / Wazuh"), ("why", "immutable logs, detections")]))
+                  [("tool", "OCI Logging Analytics"), ("why", "immutable logs, detections")]))
     g.append(node(1193, 344, W, "shield-alert", "Security posture",
                   [("tool", "Cloud Guard · VSS · Kyverno"), ("why", "drift, vulns, policy checks")]))
     g.append(arrow("M878,300 H1191", "security events", 1035, 316, "middle"))
@@ -267,12 +288,87 @@ def diagram():
     g.append(arrow("M542,1078 V1174", "backup copy", 552, 1122, dash=True))
     g.append(arrow("M1025,1078 V1174", "replicate", 1035, 1122, dash=True))
 
+    # Monthly cost tags (OCI list prices, USD), from cost_model.py
+    dedicated = {z: cm.total(f"Dedicated cell {z} (Enterprise)") + cm.total(f"DR warm standby {z} (Jeddah)")
+                 for z in "SML"}
+    biz = {n[-1]: cm.business_cost(*spec) for n, spec in cm.BUSINESS.items()}
+    dr = {z: cm.total(f"DR warm standby {z} (Jeddah)") for z in "SML"}
+    g.append(pill(892, 61, [f"Platform USD {usd(cm.total('Platform (control plane, prod)'))} / mo"]))
+    g.append(pill(1392, 472, ["SOC partner ≈ SAR 25k / mo (quote)"]))
+    g.append(pill(848, 1100, [f"Cell base USD {usd(cm.total('Pooled cell (fixed base)'))} / mo",
+                              f"+ per Business S {usd(biz['S'])} · M {usd(biz['M'])} · L {usd(biz['L'])}"]))
+    g.append(pill(1400, 1030, ["Dedicated incl. DR, USD / mo",
+                               f"S {usd(dedicated['S'])} · M {usd(dedicated['M'])} · L {usd(dedicated['L'])}",
+                               f"Gov options + {usd(cm.total('Gov pack (per dedicated cell)'))}"]))
+    g.append(pill(860, 1151, [f"Standby S {usd(dr['S'])} · M {usd(dr['M'])} · L {usd(dr['L'])} USD / mo"]))
+
     return "\n".join(g)
+
+
+def row(cells, cls=""):
+    tds = "".join(f'<td class="{c}">{v}</td>' for c, v in cells)
+    attr = f' class="{cls}"' if cls else ""
+    return f"<tr{attr}>{tds}</tr>"
+
+
+def costs_html():
+    """Cost tables: building blocks and the price book."""
+    sar = cm.SAR
+    blocks = [
+        ("Platform, production", "Control-plane OKE, PostgreSQL HA, OCI Cache, SIEM (Logging Analytics), DNS steering, backups",
+         cm.total("Platform (control plane, prod)")),
+        ("Staging", "OKE Basic, 2 nodes, single-node PostgreSQL", cm.total("Staging environment")),
+        ("Pooled cell base", "OKE Enhanced, system + shared Keycloak pools, PostgreSQL HA, WAF, LB, SIEM share",
+         cm.total("Pooled cell (fixed base)")),
+    ]
+    for n, spec in cm.BUSINESS.items():
+        blocks.append((f"+ {n} tenant", f"{spec[0]} Keycloak pods x {spec[1]} vCPU / {spec[2]} GB, own database",
+                       cm.business_cost(*spec)))
+    for z, what in (("S", "3 shared nodes, PostgreSQL 2 OCPU HA"),
+                    ("M", "Keycloak pool 3 x 4 OCPU, PostgreSQL 4 OCPU HA"),
+                    ("L", "Keycloak pool 3 x 8 OCPU, PostgreSQL 8 OCPU HA")):
+        blocks.append((f"Dedicated cell {z}", f"{what}, Jeddah warm standby included",
+                       cm.total(f"Dedicated cell {z} (Enterprise)") + cm.total(f"DR warm standby {z} (Jeddah)")))
+    blocks.append(("Gov options", "Private HSM vault + Network Firewall + FastConnect 1 Gbps, per cell",
+                   cm.total("Gov pack (per dedicated cell)")))
+    launch = sum(cm.total(b) for b in
+                 ("Platform (control plane, prod)", "Staging environment", "Pooled cell (fixed base)"))
+
+    rows = [row([("need", esc(n)), ("", esc(w)), ("num", usd(v)), ("num", usd(v * sar))]) for n, w, v in blocks]
+    rows.append(row([("need", "Infrastructure at launch"), ("", "Platform + staging + one pooled cell"),
+                     ("num", f"<strong>{usd(launch)}</strong>"), ("num", f"<strong>{usd(launch * sar)}</strong>")],
+                    "tot"))
+
+    prices = []
+    for n, (price, cost) in cm.price_book().items():
+        c = cost * sar
+        prices.append(row([("need", esc(n)), ("num", usd(price)), ("num", usd(c)),
+                           ("num", f"{(price - c) / price:.0%}")]))
+
+    return f"""
+  <section style="display:grid; gap:14px">
+    <h2>What it costs per month</h2>
+    <p class="lede">OCI pay-as-you-go list prices (the same in Riyadh and Jeddah), no discounts, VAT excluded, USD 1 = SAR 3.75. The tags on the diagram show the same numbers. Generated from <code>cost_model.py</code>; assumptions are in <code>hld-managed-services-costs.md</code>.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Building block</th><th>What's in it</th><th class="num">USD / mo</th><th class="num">SAR / mo</th></tr></thead>
+        <tbody>{"".join(rows)}</tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Plan</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
+        <tbody>{"".join(prices)}</tbody>
+      </table>
+    </div>
+  </section>
+"""
 
 
 PAGE = (HERE / "components_template.html").read_text(encoding="utf-8")
 
 if __name__ == "__main__":
-    html = PAGE.replace("<!--ICONS-->", symbols()).replace("<!--DIAGRAM-->", diagram())
+    html = (PAGE.replace("<!--ICONS-->", symbols()).replace("<!--DIAGRAM-->", diagram())
+            .replace("<!--COSTS-->", costs_html()))
     OUT.write_text(html, encoding="utf-8")
     print(f"wrote {OUT}")

@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Zimam Platform Components</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +19,8 @@
     --build-soft: #F7EAD3;
     --tile: #F0F4F1;
     --step: #2458C6;
+    --cost: #7A3E9D;
+    --cost-soft: #F3E9F8;
     --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
     --arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -26,13 +29,15 @@
     :root:not([data-theme="light"]) {
       --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
       --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
-      --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF; color-scheme: dark;
+      --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF;
+      --cost: #CDA3EA; --cost-soft: #2B1F35; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
     --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
-    --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF; color-scheme: dark;
+    --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF;
+      --cost: #CDA3EA; --cost-soft: #2B1F35; color-scheme: dark;
   }
   body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
   main { max-width: 1280px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 32px); padding-block: 32px 64px; display: grid; gap: 28px; }
@@ -62,6 +67,9 @@
   .dg .head { fill: currentColor; }
   .dg .tile { fill: var(--tile); stroke: var(--line); }
   .dg .ic { color: var(--accent); }
+  .dg .cost { fill: var(--cost-soft); stroke: var(--cost); }
+  .dg .ct { font-size: 10.5px; font-weight: 600; fill: var(--cost); font-variant-numeric: tabular-nums; }
+  .dg .ci { color: var(--cost); }
   .dg .step circle { fill: var(--step); }
   .dg .step text { fill: #fff; font-size: 11px; font-weight: 700; }
   .num { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--step); color: #fff; font-size: 11px; font-weight: 700; }
@@ -70,6 +78,7 @@
   .sw { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--line); background: var(--surface); }
   .sw.core { background: var(--accent-soft); border-color: var(--accent); }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--build); }
+  .tg { width: 18px; height: 10px; border-radius: 5px; border: 1px solid var(--cost); background: var(--cost-soft); }
   .dl { width: 22px; border-top: 1.5px dashed var(--arrow); }
 
   .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
@@ -80,6 +89,9 @@
   tbody tr:last-child td { border-bottom: 0; }
   td.tool { font-family: var(--mono); font-size: 13px; }
   td.need { font-weight: 500; white-space: nowrap; }
+  th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.tot td { background: var(--zone); }
+  code { font-family: var(--mono); font-size: .9em; }
   .chip { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
   .chip.build { background: var(--build-soft); border-color: var(--build); color: var(--fg); }
   .chip.oci { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
@@ -205,6 +217,8 @@
 <symbol id="i-shield-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
   <path d="M12 8v4" />
   <path d="M12 16h.01" /></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
+  <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></symbol>
         </defs>
 <g><rect class="bx" x="20" y="84" width="184" height="108" rx="10"/><rect class="tile" x="90.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-users" x="98.0" y="102" width="28" height="28"/><text class="t" x="112.0" y="156" text-anchor="middle">Customer admins</text><text class="tool" x="112.0" y="171" text-anchor="middle">portal · API · Terraform</text><text class="why" x="112.0" y="185" text-anchor="middle">manage their own realms</text></g>
 <g><rect class="bx" x="20" y="214" width="184" height="108" rx="10"/><rect class="tile" x="90.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-user-cog" x="98.0" y="232" width="28" height="28"/><text class="t" x="112.0" y="286" text-anchor="middle">Zimam ops team</text><text class="tool" x="112.0" y="301" text-anchor="middle">on-call · support</text><text class="why" x="112.0" y="315" text-anchor="middle">no direct prod logins</text></g>
@@ -213,7 +227,7 @@
 <g><rect class="bx" x="266" y="84" width="184" height="108" rx="10"/><rect class="tile" x="336.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-react" x="344.0" y="102" width="28" height="28"/><text class="t" x="358.0" y="156" text-anchor="middle">Customer portal</text><text class="tool" x="358.0" y="171" text-anchor="middle">React · Arabic + English</text><text class="why" x="358.0" y="185" text-anchor="middle">sign-up, plans, domains</text><circle class="bd" cx="438" cy="96" r="4.5"/></g>
 <g><rect class="bx" x="480" y="84" width="184" height="108" rx="10"/><rect class="tile" x="550.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-quarkus" x="558.0" y="102" width="28" height="28"/><text class="t" x="572.0" y="156" text-anchor="middle">Zimam API</text><text class="tool" x="572.0" y="171" text-anchor="middle">Java · Quarkus · OpenAPI</text><text class="why" x="572.0" y="185" text-anchor="middle">single source of truth</text><circle class="bd" cx="652" cy="96" r="4.5"/></g>
 <g><rect class="bx" x="694" y="84" width="184" height="108" rx="10"/><rect class="tile" x="764.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-receipt" x="772.0" y="102" width="28" height="28"/><text class="t" x="786.0" y="156" text-anchor="middle">Billing &amp; metering</text><text class="tool" x="786.0" y="171" text-anchor="middle">Lago, self-hosted in KSA</text><text class="why" x="786.0" y="185" text-anchor="middle">MAU, instance, add-on plans</text></g>
-<g><rect class="bx" x="266" y="214" width="184" height="108" rx="10"/><rect class="tile" x="336.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-lock-keyhole" x="344.0" y="232" width="28" height="28"/><text class="t" x="358.0" y="286" text-anchor="middle">Staff access</text><text class="tool" x="358.0" y="301" text-anchor="middle">Zimam Keycloak + Bastion</text><text class="why" x="358.0" y="315" text-anchor="middle">MFA, recorded sessions</text></g>
+<g><rect class="bx" x="266" y="214" width="184" height="108" rx="10"/><rect class="tile" x="336.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-lock-keyhole" x="344.0" y="232" width="28" height="28"/><text class="t" x="358.0" y="286" text-anchor="middle">Staff access</text><text class="tool" x="358.0" y="301" text-anchor="middle">OCI Identity Domains + Bastion</text><text class="why" x="358.0" y="315" text-anchor="middle">MFA, recorded sessions</text></g>
 <g><rect class="bx" x="480" y="214" width="184" height="108" rx="10"/><rect class="tile" x="550.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-postgresql" x="558.0" y="232" width="28" height="28"/><text class="t" x="572.0" y="286" text-anchor="middle">Control-plane DB</text><text class="tool" x="572.0" y="301" text-anchor="middle">OCI Database PostgreSQL</text><text class="why" x="572.0" y="315" text-anchor="middle">tenants, plans, jobs, audit</text></g>
 <g><rect class="bx" x="694" y="214" width="184" height="108" rx="10"/><rect class="tile" x="764.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-grafana" x="772.0" y="232" width="28" height="28"/><text class="t" x="786.0" y="286" text-anchor="middle">Observability</text><text class="tool" x="786.0" y="301" text-anchor="middle">Prometheus · Grafana · Logs</text><text class="why" x="786.0" y="315" text-anchor="middle">SLA alerts, audit export</text></g>
 <g><rect class="bx" x="266" y="344" width="184" height="108" rx="10"/><rect class="tile" x="336.0" y="354" width="44" height="44" rx="10"/><use class="ic" href="#i-git" x="344.0" y="362" width="28" height="28"/><text class="t" x="358.0" y="416" text-anchor="middle">Config repo</text><text class="tool" x="358.0" y="431" text-anchor="middle">Git on OCI DevOps</text><text class="why" x="358.0" y="445" text-anchor="middle">every change reviewed</text></g>
@@ -234,7 +248,7 @@
 <path class="ar" d="M878,172 H912 V250 H938" marker-end="url(#ah)"/><text class="lbl" x="916" y="206" text-anchor="start">e-invoice</text>
 <rect class="zone" x="1170" y="40" width="230" height="432" rx="14"/><use class="ic" href="#i-shield-check" x="1186" y="52" width="16" height="16"/><text class="zt" x="1210" y="65">SECURITY OPERATIONS</text>
 <g><rect class="bx" x="1193" y="84" width="184" height="108" rx="10"/><rect class="tile" x="1263.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-headset" x="1271.0" y="102" width="28" height="28"/><text class="t" x="1285.0" y="156" text-anchor="middle">24/7 SOC</text><text class="tool" x="1285.0" y="171" text-anchor="middle">Saudi MSSP under contract</text><text class="why" x="1285.0" y="185" text-anchor="middle">Zimam stays accountable</text></g>
-<g><rect class="bx" x="1193" y="214" width="184" height="108" rx="10"/><rect class="tile" x="1263.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-radar" x="1271.0" y="232" width="28" height="28"/><text class="t" x="1285.0" y="286" text-anchor="middle">SIEM</text><text class="tool" x="1285.0" y="301" text-anchor="middle">Logging Analytics / Wazuh</text><text class="why" x="1285.0" y="315" text-anchor="middle">immutable logs, detections</text></g>
+<g><rect class="bx" x="1193" y="214" width="184" height="108" rx="10"/><rect class="tile" x="1263.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-radar" x="1271.0" y="232" width="28" height="28"/><text class="t" x="1285.0" y="286" text-anchor="middle">SIEM</text><text class="tool" x="1285.0" y="301" text-anchor="middle">OCI Logging Analytics</text><text class="why" x="1285.0" y="315" text-anchor="middle">immutable logs, detections</text></g>
 <g><rect class="bx" x="1193" y="344" width="184" height="108" rx="10"/><rect class="tile" x="1263.0" y="354" width="44" height="44" rx="10"/><use class="ic" href="#i-shield-alert" x="1271.0" y="362" width="28" height="28"/><text class="t" x="1285.0" y="416" text-anchor="middle">Security posture</text><text class="tool" x="1285.0" y="431" text-anchor="middle">Cloud Guard · VSS · Kyverno</text><text class="why" x="1285.0" y="445" text-anchor="middle">drift, vulns, policy checks</text></g>
 <path class="ar" d="M878,300 H1191" marker-end="url(#ah)"/><text class="lbl" x="1035" y="316" text-anchor="middle">security events</text>
 <path class="ar" d="M1285,214 V194" marker-end="url(#ah)"/><text class="lbl" x="1293" y="208" text-anchor="start">alerts</text>
@@ -287,12 +301,18 @@
 <g><rect class="bx" x="690" y="1176" width="440" height="70" rx="10"/><rect class="tile" x="702" y="1191.0" width="40" height="40" rx="9"/><use class="ic" href="#i-copy" x="710" y="1199.0" width="24" height="24"/><text class="t" x="754" y="1208.0">Warm standby</text><text class="tool" x="754" y="1224.0">PostgreSQL replica + small cell · RPO 15 min / RTO 1 h</text></g>
 <path class="ar dash" d="M542,1078 V1174" marker-end="url(#ah)"/><text class="lbl" x="552" y="1122" text-anchor="start">backup copy</text>
 <path class="ar dash" d="M1025,1078 V1174" marker-end="url(#ah)"/><text class="lbl" x="1035" y="1122" text-anchor="start">replicate</text>
+<g><rect class="cost" x="720.0" y="50.0" width="172.0" height="22" rx="11.0"/><use class="ci" href="#i-tag" x="729.0" y="55" width="12" height="12"/><text class="ct" x="747.0" y="65.0">Platform USD 1,219 / mo</text></g>
+<g><rect class="cost" x="1154.0" y="461.0" width="238.0" height="22" rx="11.0"/><use class="ci" href="#i-tag" x="1163.0" y="466" width="12" height="12"/><text class="ct" x="1181.0" y="476.0">SOC partner ≈ SAR 25k / mo (quote)</text></g>
+<g><rect class="cost" x="604.0" y="1082.0" width="244.0" height="36" rx="11"/><use class="ci" href="#i-tag" x="613.0" y="1094" width="12" height="12"/><text class="ct" x="631.0" y="1097.0">Cell base USD 1,629 / mo</text><text class="ct" x="631.0" y="1111.0">+ per Business S 88 · M 177 · L 412</text></g>
+<g><rect class="cost" x="1198.0" y="1005.0" width="202.0" height="50" rx="11"/><use class="ci" href="#i-tag" x="1207.0" y="1024" width="12" height="12"/><text class="ct" x="1225.0" y="1020.0">Dedicated incl. DR, USD / mo</text><text class="ct" x="1225.0" y="1034.0">S 1,230 · M 2,593 · L 5,074</text><text class="ct" x="1225.0" y="1048.0">Gov options + 4,881</text></g>
+<g><rect class="cost" x="586.0" y="1140.0" width="274.0" height="22" rx="11.0"/><use class="ci" href="#i-tag" x="595.0" y="1145" width="12" height="12"/><text class="ct" x="613.0" y="1155.0">Standby S 298 · M 587 · L 1,301 USD / mo</text></g>
       </svg>
     </div>
     <figcaption>
       <span class="key"><span class="sw core"></span>Keycloak runtime</span>
       <span class="key"><span class="dot"></span>Zimam builds or extends it</span>
       <span class="key"><span class="dl"></span>Provisioning or async copy</span>
+      <span class="key"><span class="tg"></span>Monthly OCI list cost, USD</span>
       <span class="key"><span class="num">1</span>–<span class="num">5</span>&nbsp;Sign-up to first login: customer signs up, plan starts in billing, cell agent picks up the tenant, realm or instance is created, their users log in</span>
     </figcaption>
   </figure>
@@ -310,7 +330,7 @@
           <tr><td class="need">Cell provisioner</td><td class="tool">Terraform · OCI Resource Manager</td><td>Every cell is built from the same code; plan and apply history doubles as audit evidence</td><td><span class="chip build">Build modules</span></td></tr>
           <tr><td class="need">Config repo + GitOps</td><td class="tool">Git (OCI DevOps) + Flux</td><td>Each cell pulls its own config, so the control plane never needs a network path into a customer's cell</td><td><span class="chip">Open source</span></td></tr>
           <tr><td class="need">Registry and scanning</td><td class="tool">OCI Container Registry · Trivy · Cosign</td><td>Only signed, scanned images and customer extension JARs reach a cell</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
-          <tr><td class="need">Staff access</td><td class="tool">Zimam's own Keycloak · OCI Bastion</td><td>Staff MFA, time-limited sessions, no standing production access (NCA ECC)</td><td><span class="chip oci">OCI</span></td></tr>
+          <tr><td class="need">Staff access</td><td class="tool">OCI IAM Identity Domains · OCI Bastion</td><td>Staff MFA, time-limited sessions, no standing production access (NCA ECC). Not Zimam's own Keycloak, so staff can still log in when a cell is down.</td><td><span class="chip oci">OCI</span></td></tr>
 
           <tr class="grp"><th colspan="4">Inside every cell</th></tr>
           <tr><td class="need">Kubernetes</td><td class="tool">OKE</td><td>Managed control plane, nodes spread across three fault domains</td><td><span class="chip oci">OCI managed</span></td></tr>
@@ -331,7 +351,7 @@
 
           <tr class="grp"><th colspan="4">Operations and recovery</th></tr>
           <tr><td class="need">Observability</td><td class="tool">Prometheus · Grafana · OCI Logging</td><td>SLA tracking, alerting, per-tenant audit log export to customer SIEMs</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
-          <tr><td class="need">SIEM</td><td class="tool">OCI Logging Analytics or Wazuh</td><td>NCA CCC 2-11-P-1-5 requires SIEM monitoring of the full stack; logs stay in the Kingdom with an immutable archive</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">SIEM</td><td class="tool">OCI Logging Analytics</td><td>NCA CCC 2-11-P-1-5 requires SIEM monitoring of the full stack; logs stay in the Kingdom with an immutable archive. Available in both Saudi regions, so no self-run Wazuh.</td><td><span class="chip oci">OCI managed</span></td></tr>
           <tr><td class="need">24/7 SOC</td><td class="tool">NCA-licensed Saudi MSSP</td><td>Round-the-clock monitoring with Saudi security staff (CCC 1-4-P-1-1); Zimam stays accountable</td><td><span class="chip">Partner</span></td></tr>
           <tr><td class="need">Privileged access</td><td class="tool">OCI Bastion or Teleport</td><td>MFA, time-bound access and recorded sessions for every staff action in production (CCC 2-2-P-1)</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
           <tr><td class="need">Security posture</td><td class="tool">Cloud Guard · Vulnerability Scanning · Kyverno · Falco</td><td>Monthly external and quarterly internal vulnerability cycles (CCC 2-9-P-1-1), admission and runtime policy</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
@@ -339,6 +359,24 @@
           <tr><td class="need">Public status page</td><td class="tool">Upptime or similar</td><td>Every competitor reviewed publishes one; buyers expect it</td><td><span class="chip">Open source</span></td></tr>
           <tr><td class="need">Disaster recovery</td><td class="tool">Object Storage replication · PostgreSQL replica in Jeddah</td><td>Off-region backups for every tier; warm standby for Enterprise and the Business DR add-on</td><td><span class="chip oci">OCI managed</span></td></tr>
         </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <section style="display:grid; gap:14px">
+    <h2>What it costs per month</h2>
+    <p class="lede">OCI pay-as-you-go list prices (the same in Riyadh and Jeddah), no discounts, VAT excluded, USD 1 = SAR 3.75. The tags on the diagram show the same numbers. Generated from <code>cost_model.py</code>; assumptions are in <code>hld-managed-services-costs.md</code>.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Building block</th><th>What's in it</th><th class="num">USD / mo</th><th class="num">SAR / mo</th></tr></thead>
+        <tbody><tr><td class="need">Platform, production</td><td class="">Control-plane OKE, PostgreSQL HA, OCI Cache, SIEM (Logging Analytics), DNS steering, backups</td><td class="num">1,219</td><td class="num">4,572</td></tr><tr><td class="need">Staging</td><td class="">OKE Basic, 2 nodes, single-node PostgreSQL</td><td class="num">273</td><td class="num">1,024</td></tr><tr><td class="need">Pooled cell base</td><td class="">OKE Enhanced, system + shared Keycloak pools, PostgreSQL HA, WAF, LB, SIEM share</td><td class="num">1,629</td><td class="num">6,107</td></tr><tr><td class="need">+ Business S tenant</td><td class="">2 Keycloak pods x 1 vCPU / 2 GB, own database</td><td class="num">88</td><td class="num">330</td></tr><tr><td class="need">+ Business M tenant</td><td class="">2 Keycloak pods x 2 vCPU / 4 GB, own database</td><td class="num">177</td><td class="num">663</td></tr><tr><td class="need">+ Business L tenant</td><td class="">3 Keycloak pods x 4 vCPU / 6 GB, own database</td><td class="num">412</td><td class="num">1,544</td></tr><tr><td class="need">Dedicated cell S</td><td class="">3 shared nodes, PostgreSQL 2 OCPU HA, Jeddah warm standby included</td><td class="num">1,230</td><td class="num">4,613</td></tr><tr><td class="need">Dedicated cell M</td><td class="">Keycloak pool 3 x 4 OCPU, PostgreSQL 4 OCPU HA, Jeddah warm standby included</td><td class="num">2,593</td><td class="num">9,723</td></tr><tr><td class="need">Dedicated cell L</td><td class="">Keycloak pool 3 x 8 OCPU, PostgreSQL 8 OCPU HA, Jeddah warm standby included</td><td class="num">5,074</td><td class="num">19,029</td></tr><tr><td class="need">Gov options</td><td class="">Private HSM vault + Network Firewall + FastConnect 1 Gbps, per cell</td><td class="num">4,881</td><td class="num">18,304</td></tr><tr class="tot"><td class="need">Infrastructure at launch</td><td class="">Platform + staging + one pooled cell</td><td class="num"><strong>3,121</strong></td><td class="num"><strong>11,703</strong></td></tr></tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Plan</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
+        <tbody><tr><td class="need">Starter 5k MAU</td><td class="num">290</td><td class="num">17</td><td class="num">94%</td></tr><tr><td class="need">Starter 10k MAU</td><td class="num">490</td><td class="num">26</td><td class="num">95%</td></tr><tr><td class="need">Starter 25k MAU</td><td class="num">990</td><td class="num">52</td><td class="num">95%</td></tr><tr><td class="need">Starter 50k MAU</td><td class="num">1,690</td><td class="num">86</td><td class="num">95%</td></tr><tr><td class="need">Business S</td><td class="num">1,500</td><td class="num">397</td><td class="num">74%</td></tr><tr><td class="need">Business M</td><td class="num">3,000</td><td class="num">729</td><td class="num">76%</td></tr><tr><td class="need">Business L</td><td class="num">6,000</td><td class="num">1,611</td><td class="num">73%</td></tr><tr><td class="need">Business S DR add-on</td><td class="num">500</td><td class="num">158</td><td class="num">68%</td></tr><tr><td class="need">Business M DR add-on</td><td class="num">1,000</td><td class="num">317</td><td class="num">68%</td></tr><tr><td class="need">Business L DR add-on</td><td class="num">2,000</td><td class="num">621</td><td class="num">69%</td></tr><tr><td class="need">Enterprise S (DR included)</td><td class="num">11,250</td><td class="num">4,613</td><td class="num">59%</td></tr><tr><td class="need">Enterprise M (DR included)</td><td class="num">24,000</td><td class="num">9,723</td><td class="num">59%</td></tr><tr><td class="need">Enterprise L (DR included)</td><td class="num">45,000</td><td class="num">19,029</td><td class="num">58%</td></tr><tr><td class="need">Gov: dedicated HSM vault</td><td class="num">13,500</td><td class="num">10,194</td><td class="num">24%</td></tr><tr><td class="need">Gov: dedicated Network Firewall</td><td class="num">10,000</td><td class="num">7,528</td><td class="num">25%</td></tr><tr><td class="need">Gov: FastConnect 1 Gbps</td><td class="num">1,500</td><td class="num">582</td><td class="num">61%</td></tr></tbody>
       </table>
     </div>
   </section>
@@ -354,7 +392,7 @@
     <section class="note">
       <h2>Check before committing</h2>
       <ul>
-        <li>OKE and OCI Database with PostgreSQL, including cross-region replicas, are available in both Riyadh and Jeddah.</li>
+        <li>Service endpoints are confirmed live in Riyadh and Jeddah. Still confirm shape capacity, vault limits, and how OCI bills PostgreSQL memory and HA replicas.</li>
         <li>Nafath access: the agreement and approval process with the operator, and its lead time.</li>
         <li>How Lago invoices reach ZATCA Fatoora (Phase 2 integration).</li>
         <li>Payment gateway onboarding requirements for your commercial registration.</li>
