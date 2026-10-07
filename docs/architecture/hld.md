@@ -8,6 +8,7 @@
 | **Owner** | Ahmed Assaf |
 | **Last updated** | 2026-10-07 |
 | **Visual diagram** | [zimam-components.html](zimam-components.html) (open in a browser) |
+| **Managed services and costs** | [hld-managed-services-costs.md](hld-managed-services-costs.md) |
 
 ## 1. Purpose and scope
 
@@ -129,8 +130,8 @@ flowchart TB
 | Edge | WAF, TLS, routing by hostname, custom-domain certificates | OCI WAF, OCI LB, Envoy Gateway, cert-manager | Use |
 | Secrets and keys | DB credentials, signing keys, master key per cell; BYOK for Gov | OCI Vault (HSM for dedicated) | Use (managed) |
 | Observability | SLA metrics, alerts, per-tenant audit log export | Prometheus, Grafana, Fluent Bit, OCI Logging | Use |
-| Staff access | Staff MFA, recorded and time-limited production sessions | Zimam's own Keycloak, OCI Bastion | Use |
-| SIEM | Central security event analysis, detections, immutable archive | OCI Logging Analytics or Wazuh, Object Storage retention lock | Use |
+| Staff access | Staff MFA, recorded and time-limited production sessions | OCI IAM Identity Domains (staff SSO + MFA), OCI Bastion | Use (managed) |
+| SIEM | Central security event analysis, detections, immutable archive | OCI Logging Analytics, Object Storage retention lock | Use (managed) |
 | 24/7 SOC | Continuous monitoring and escalation, Saudi security staff | NCA-licensed Saudi MSSP (Zimam accountable) | Partner |
 | Security posture | Misconfiguration, vulnerabilities, admission and runtime policy | Cloud Guard, Vulnerability Scanning, Kyverno, Falco | Use |
 | Infrastructure as code | CIS-aligned foundation, policy checks before apply, drift detection | OCI Core Landing Zone, Terraform, Checkov, OPA | Use + build modules |
@@ -296,7 +297,7 @@ Noisy-neighbour limits on pooled cells: per-realm rate limits at the edge, a max
 
 | # | Item | Mitigation or next step |
 |---|---|---|
-| 1 | OKE, OCI PostgreSQL and its cross-region replication may not be available in both Saudi regions | Verify in the first spike before any build work |
+| 1 | OKE, OCI PostgreSQL and its cross-region replication may not be available in both Saudi regions | Endpoints confirmed live in both regions on 2026-10-07 ([managed services HLD](hld-managed-services-costs.md#21-service-availability-in-saudi-regions)); still confirm shape capacity, vault limits and PostgreSQL data placement |
 | 2 | Nafath integration needs approval from its operator, with unknown lead time | Start the application early; ship OTP and passkeys first |
 | 3 | Lago does not produce ZATCA Phase 2 invoices on its own | Choose a ZATCA connector or certified e-invoicing provider |
 | 4 | Shared-realm limits per Keycloak cluster are unknown | Load test to set realm and MAU limits per pooled cell |

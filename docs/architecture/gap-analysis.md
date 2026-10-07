@@ -98,5 +98,5 @@ ECC also applies to Zimam as a company, not only to the platform.
 ## 3. Recommended next steps
 
 1. Add the P0 items to the spec and the implementation plan.
-2. Run the first spike: check OKE, OCI PostgreSQL (with cross-region replication) and Logging Analytics availability in Riyadh and Jeddah.
+2. Run the first spike. Service availability in Riyadh and Jeddah is confirmed ([managed services HLD](hld-managed-services-costs.md#21-service-availability-in-saudi-regions)); still confirm shape capacity, vault limits, PostgreSQL data placement and PostgreSQL HA pricing.
 3. Start the long-lead items in parallel: CR and VAT, Nafath application, MSSP shortlist, contract templates.
