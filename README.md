@@ -6,4 +6,5 @@ Status: design phase.
 
 ## Docs
 
-- [Platform components](docs/architecture/zimam-components.html): component diagram with every tool and why it was chosen. Open the file in a browser.
+- [High-level design](docs/architecture/hld.md): tiers, architecture, deployment, key flows, security, NFRs, decisions and risks.
+- [Platform components](docs/architecture/zimam-components.html): visual component diagram with every tool and why it was chosen. Open the file in a browser. Rebuild it with `python docs/architecture/build_components.py`.

@@ -1,0 +1,179 @@
+<title>Zimam Platform Components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one wide engineering drawing, then a reference table grouped by layer. */
+  :root {
+    --bg: #F4F6F4;
+    --surface: #FFFFFF;
+    --zone: #E9EEEA;
+    --fg: #16201B;
+    --muted: #56645C;
+    --line: #B4C0B8;
+    --arrow: #44524A;
+    --accent: #0C6A4E;
+    --accent-soft: #DDEFE6;
+    --build: #B26B00;
+    --build-soft: #F7EAD3;
+    --tile: #F0F4F1;
+    --step: #2458C6;
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
+      --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
+      --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
+    --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
+    --build: #E7B45A; --build-soft: #3A2D13; --tile: #1F2925; --step: #5B8DEF; color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
+  main { max-width: 1280px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 32px); padding-block: 32px 64px; display: grid; gap: 28px; }
+  header { display: grid; gap: 6px; }
+  .eyebrow { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .eyebrow .ar { font-family: var(--arabic); font-size: 20px; letter-spacing: 0; text-transform: none; color: var(--accent); font-weight: 600; }
+  h1 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; margin: 0; font-weight: 600; text-wrap: balance; }
+  h2 { font-size: 20px; margin: 0; font-weight: 600; text-wrap: balance; }
+  p { margin: 0; max-width: 72ch; }
+  .lede { color: var(--muted); }
+
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; }
+  .scroll { overflow-x: auto; padding: 12px; }
+  .dg { display: block; width: 100%; min-width: 1120px; height: auto; color: var(--arrow); }
+  .dg text { font-family: var(--sans); }
+  .dg .t { font-size: 12px; font-weight: 600; fill: var(--fg); }
+  .dg .tool { font-size: 11px; fill: var(--accent); font-weight: 500; }
+  .dg .why { font-size: 10.5px; fill: var(--muted); }
+  .dg .zt { font-size: 10px; font-weight: 600; letter-spacing: .08em; fill: var(--muted); }
+  .dg .lbl { font-size: 10px; fill: var(--muted); }
+  .dg .bx { fill: var(--surface); stroke: var(--line); }
+  .dg .core { fill: var(--accent-soft); stroke: var(--accent); }
+  .dg .zone { fill: var(--zone); stroke: var(--line); stroke-dasharray: 4 3; }
+  .dg .ar { fill: none; stroke: currentColor; stroke-width: 1.3; }
+  .dg .dash { stroke-dasharray: 5 4; }
+  .dg .bd { fill: var(--build); }
+  .dg .head { fill: currentColor; }
+  .dg .tile { fill: var(--tile); stroke: var(--line); }
+  .dg .ic { color: var(--accent); }
+  .dg .step circle { fill: var(--step); }
+  .dg .step text { fill: #fff; font-size: 11px; font-weight: 700; }
+  .num { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--step); color: #fff; font-size: 11px; font-weight: 700; }
+  figcaption { border-top: 1px solid var(--line); padding: 12px 16px; font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 22px; }
+  .key { display: inline-flex; align-items: center; gap: 7px; }
+  .sw { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--line); background: var(--surface); }
+  .sw.core { background: var(--accent-soft); border-color: var(--accent); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--build); }
+  .dl { width: 22px; border-top: 1.5px dashed var(--arrow); }
+
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  thead th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tr.grp th { background: var(--zone); font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.tool { font-family: var(--mono); font-size: 13px; }
+  td.need { font-weight: 500; white-space: nowrap; }
+  .chip { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chip.build { background: var(--build-soft); border-color: var(--build); color: var(--fg); }
+  .chip.oci { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
+  .note ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+  .note h2 { font-size: 16px; }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow"><span class="ar">زمام</span><span>Zimam · Identity Cloud, powered by Keycloak</span></div>
+    <h1>Platform components</h1>
+    <p class="lede">Every tool the first release needs, where it runs, and why it was chosen. Three tiers run on two kinds of cell, managed by one control plane. Everything is hosted in OCI's Saudi regions.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+      <svg class="dg" viewBox="0 0 1420 1290" role="img" aria-label="Zimam component diagram. Customer admins sign up in the portal; the Zimam API stores the tenant and starts the plan in Lago billing, which charges through a Saudi payment gateway and reports invoices to ZATCA. Cells in OCI Riyadh only call out to the platform: the cell agent pulls new tenants and creates realms in the shared Keycloak (Starter) or deploys per-tenant Keycloak instances through the Keycloak Operator (Business). Dedicated cells serve one Enterprise or Gov customer with private access and customer-held keys. End users log in through the cell edge. Keycloak calls Nafath, SMS and email OTP, and customer identity providers. Backups and replicas go to OCI Jeddah for disaster recovery.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path class="head" d="M0,0 L10,5 L0,10 z"/>
+          </marker>
+<!--ICONS-->
+        </defs>
+<!--DIAGRAM-->
+      </svg>
+    </div>
+    <figcaption>
+      <span class="key"><span class="sw core"></span>Keycloak runtime</span>
+      <span class="key"><span class="dot"></span>Zimam builds or extends it</span>
+      <span class="key"><span class="dl"></span>Provisioning or async copy</span>
+      <span class="key"><span class="num">1</span>–<span class="num">5</span>&nbsp;Sign-up to first login: customer signs up, plan starts in billing, cell agent picks up the tenant, realm or instance is created, their users log in</span>
+    </figcaption>
+  </figure>
+
+  <section style="display:grid; gap:14px">
+    <h2>What we need and why</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Need</th><th>Tool</th><th>Why this one</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr class="grp"><th colspan="4">Control plane</th></tr>
+          <tr><td class="need">Customer portal</td><td class="tool">React, Arabic + English</td><td>Self-serve sign-up and tenant management, right-to-left from day one</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Zimam API</td><td class="tool">Java 21 · Quarkus · OpenAPI</td><td>Same language as the Keycloak extensions, so a small team works in one stack. Fast startup, small memory footprint.</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Control-plane database</td><td class="tool">OCI Database with PostgreSQL</td><td>Managed high availability and backups, with no database admin needed</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Cell provisioner</td><td class="tool">Terraform · OCI Resource Manager</td><td>Every cell is built from the same code; plan and apply history doubles as audit evidence</td><td><span class="chip build">Build modules</span></td></tr>
+          <tr><td class="need">Config repo + GitOps</td><td class="tool">Git (OCI DevOps) + Flux</td><td>Each cell pulls its own config, so the control plane never needs a network path into a customer's cell</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Registry and scanning</td><td class="tool">OCI Container Registry · Trivy · Cosign</td><td>Only signed, scanned images and customer extension JARs reach a cell</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Staff access</td><td class="tool">Zimam's own Keycloak · OCI Bastion</td><td>Staff MFA, time-limited sessions, no standing production access (NCA ECC)</td><td><span class="chip oci">OCI</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Inside every cell</th></tr>
+          <tr><td class="need">Kubernetes</td><td class="tool">OKE</td><td>Managed control plane, nodes spread across three fault domains</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Keycloak runtime</td><td class="tool">Keycloak + Keycloak Operator</td><td>The official operator handles deploys, scaling and rolling upgrades</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Cell agent</td><td class="tool">Java Operator SDK</td><td>Turns tenant records into realms, instances and databases; reports status and usage back</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Zimam extensions</td><td class="tool">Keycloak SPIs</td><td>Nafath login, MAU metering (event listener), Arabic themes. These are the local features competitors lack.</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Edge</td><td class="tool">OCI WAF · Load Balancer · Envoy Gateway · cert-manager</td><td>Bot and DDoS filtering, TLS for wildcard and customer domains, routing by hostname</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Database</td><td class="tool">OCI Database with PostgreSQL</td><td>One HA server per cell, separate database and credentials per Business tenant, point-in-time restore</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Secrets and keys</td><td class="tool">OCI Vault (HSM for dedicated)</td><td>Master key per cell; Gov customers can hold their own keys</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Telemetry</td><td class="tool">Fluent Bit · Prometheus agent</td><td>Logs and login events tagged with tenant ID; metrics for SLA reporting</td><td><span class="chip">Open source</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Billing and Saudi services</th></tr>
+          <tr><td class="need">Billing</td><td class="tool">Lago, self-hosted</td><td>Usage-based plans (MAU, instance size, add-ons) without custom billing code; billing data stays in KSA</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Payments</td><td class="tool">Moyasar, HyperPay or Tap</td><td>Saudi-licensed, supports mada and SAR. Pick one.</td><td><span class="chip">SaaS</span></td></tr>
+          <tr><td class="need">E-invoicing</td><td class="tool">ZATCA Fatoora connector</td><td>Legally required. Lago will most likely need a connector to produce ZATCA-compliant invoices.</td><td><span class="chip build">Build or buy</span></td></tr>
+          <tr><td class="need">National ID login</td><td class="tool">Nafath</td><td>The main local differentiator for government and banking buyers</td><td><span class="chip">Gov integration</span></td></tr>
+          <tr><td class="need">OTP delivery</td><td class="tool">Unifonic · OCI Email Delivery</td><td>Registered Saudi SMS sender IDs; email sent from within the region</td><td><span class="chip">SaaS</span> <span class="chip oci">OCI</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Operations and recovery</th></tr>
+          <tr><td class="need">Observability</td><td class="tool">Prometheus · Grafana · OCI Logging</td><td>SLA tracking, alerting, per-tenant audit log export to customer SIEMs</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Public status page</td><td class="tool">Upptime or similar</td><td>Every competitor reviewed publishes one; buyers expect it</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Disaster recovery</td><td class="tool">Object Storage replication · PostgreSQL replica in Jeddah</td><td>Off-region backups for every tier; warm standby for Enterprise and the Business DR add-on</td><td><span class="chip oci">OCI managed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section class="note">
+      <h2>Changed since the control-plane section</h2>
+      <ul>
+        <li><strong>Flux in each cell instead of one central Argo CD.</strong> Cells pull their config, so dedicated Gov cells never accept inbound connections from the control plane.</li>
+        <li><strong>Envoy Gateway instead of ingress-nginx.</strong> The ingress-nginx project was retired in March 2026 and no longer receives security fixes.</li>
+      </ul>
+    </section>
+    <section class="note">
+      <h2>Check before committing</h2>
+      <ul>
+        <li>OKE and OCI Database with PostgreSQL, including cross-region replicas, are available in both Riyadh and Jeddah.</li>
+        <li>Nafath access: the agreement and approval process with the operator, and its lead time.</li>
+        <li>How Lago invoices reach ZATCA Fatoora (Phase 2 integration).</li>
+        <li>Payment gateway onboarding requirements for your commercial registration.</li>
+      </ul>
+    </section>
+  </div>
+</main>
