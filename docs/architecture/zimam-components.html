@@ -1,0 +1,405 @@
+<title>Zimam Platform Components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one wide engineering drawing, then a reference table grouped by layer. */
+  :root {
+    --bg: #F4F6F4;
+    --surface: #FFFFFF;
+    --zone: #E9EEEA;
+    --fg: #16201B;
+    --muted: #56645C;
+    --line: #B4C0B8;
+    --arrow: #44524A;
+    --accent: #0C6A4E;
+    --accent-soft: #DDEFE6;
+    --build: #B26B00;
+    --build-soft: #F7EAD3;
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
+      --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
+      --build: #E7B45A; --build-soft: #3A2D13; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1411; --surface: #161E1A; --zone: #121916; --fg: #E4EBE6; --muted: #9AA9A0;
+    --line: #3A4842; --arrow: #A9B7AF; --accent: #4FC79B; --accent-soft: #173428;
+    --build: #E7B45A; --build-soft: #3A2D13; color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
+  main { max-width: 1280px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 32px); padding-block: 32px 64px; display: grid; gap: 28px; }
+  header { display: grid; gap: 6px; }
+  .eyebrow { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .eyebrow .ar { font-family: var(--arabic); font-size: 20px; letter-spacing: 0; text-transform: none; color: var(--accent); font-weight: 600; }
+  h1 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; margin: 0; font-weight: 600; text-wrap: balance; }
+  h2 { font-size: 20px; margin: 0; font-weight: 600; text-wrap: balance; }
+  p { margin: 0; max-width: 72ch; }
+  .lede { color: var(--muted); }
+
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; }
+  .scroll { overflow-x: auto; padding: 12px; }
+  .dg { display: block; width: 100%; min-width: 1040px; height: auto; color: var(--arrow); }
+  .dg text { font-family: var(--sans); }
+  .dg .t { font-size: 12px; font-weight: 600; fill: var(--fg); }
+  .dg .tool { font-size: 11px; fill: var(--accent); font-weight: 500; }
+  .dg .why { font-size: 10.5px; fill: var(--muted); }
+  .dg .zt { font-size: 10px; font-weight: 600; letter-spacing: .08em; fill: var(--muted); }
+  .dg .lbl { font-size: 10px; fill: var(--muted); }
+  .dg .bx { fill: var(--surface); stroke: var(--line); }
+  .dg .core { fill: var(--accent-soft); stroke: var(--accent); }
+  .dg .zone { fill: var(--zone); stroke: var(--line); stroke-dasharray: 4 3; }
+  .dg .ar { fill: none; stroke: currentColor; stroke-width: 1.3; }
+  .dg .dash { stroke-dasharray: 5 4; }
+  .dg .bd { fill: var(--build); }
+  .dg .head { fill: currentColor; }
+  figcaption { border-top: 1px solid var(--line); padding: 12px 16px; font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 22px; }
+  .key { display: inline-flex; align-items: center; gap: 7px; }
+  .sw { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--line); background: var(--surface); }
+  .sw.core { background: var(--accent-soft); border-color: var(--accent); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--build); }
+  .dl { width: 22px; border-top: 1.5px dashed var(--arrow); }
+
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  thead th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tr.grp th { background: var(--zone); font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.tool { font-family: var(--mono); font-size: 13px; }
+  td.need { font-weight: 500; white-space: nowrap; }
+  .chip { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .chip.build { background: var(--build-soft); border-color: var(--build); color: var(--fg); }
+  .chip.oci { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
+  .note ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+  .note h2 { font-size: 16px; }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow"><span class="ar">زمام</span><span>Zimam · Identity Cloud, powered by Keycloak</span></div>
+    <h1>Platform components</h1>
+    <p class="lede">Every tool the first release needs, where it runs, and why it was chosen. Three tiers run on two kinds of cell, managed by one control plane. Everything is hosted in OCI's Saudi regions.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+      <svg class="dg" viewBox="0 0 1280 884" role="img" aria-label="Zimam component diagram. Customers use the portal and API in the platform compartment, which holds billing, the control-plane database, the cell provisioner, the config repo, the image registry and observability. Cells in Riyadh pull tenants, config and images from the platform and push status and usage back. A pooled cell runs a shared Keycloak for Starter realms and per-tenant Keycloak instances for Business, deployed by the Keycloak Operator and driven by the cell agent. Dedicated cells serve one Enterprise or Gov customer with private access and customer-held keys. Backups and replicas go to Jeddah for disaster recovery. Keycloak calls Nafath, SMS and email, and customer identity providers; billing calls the payment gateway and ZATCA.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path class="head" d="M0,0 L10,5 L0,10 z"/>
+          </marker>
+        </defs>
+
+        <!-- People -->
+        <g>
+          <rect class="bx" x="16" y="76" width="190" height="62" rx="6"/>
+          <text class="t" x="26" y="94">Customer admins</text>
+          <text class="tool" x="26" y="109">Portal · API · Terraform</text>
+          <text class="why" x="26" y="124">manage their own realms</text>
+
+          <rect class="bx" x="16" y="166" width="190" height="62" rx="6"/>
+          <text class="t" x="26" y="184">Zimam ops team</text>
+          <text class="tool" x="26" y="199">on-call · support</text>
+          <text class="why" x="26" y="214">never log in to prod directly</text>
+
+          <rect class="bx" x="16" y="524" width="190" height="62" rx="6"/>
+          <text class="t" x="26" y="542">End users</text>
+          <text class="tool" x="26" y="557">of customers' apps</text>
+          <text class="why" x="26" y="572">log in, MFA, Nafath</text>
+        </g>
+
+        <!-- Platform compartment -->
+        <rect class="zone" x="236" y="36" width="744" height="296" rx="10"/>
+        <text class="zt" x="252" y="58">PLATFORM COMPARTMENT · CONTROL PLANE · OCI RIYADH</text>
+
+        <rect class="bx" x="256" y="76" width="214" height="62" rx="6"/>
+        <circle class="bd" cx="460" cy="86" r="4"/>
+        <text class="t" x="266" y="94">Customer portal</text>
+        <text class="tool" x="266" y="109">React · Arabic + English (RTL)</text>
+        <text class="why" x="266" y="124">sign-up, plans, domains, users</text>
+
+        <rect class="bx" x="498" y="76" width="214" height="62" rx="6"/>
+        <circle class="bd" cx="702" cy="86" r="4"/>
+        <text class="t" x="508" y="94">Zimam API</text>
+        <text class="tool" x="508" y="109">Java · Quarkus · OpenAPI</text>
+        <text class="why" x="508" y="124">single source of truth</text>
+
+        <rect class="bx" x="740" y="76" width="214" height="62" rx="6"/>
+        <text class="t" x="750" y="94">Billing &amp; metering</text>
+        <text class="tool" x="750" y="109">Lago (self-hosted in KSA)</text>
+        <text class="why" x="750" y="124">MAU, instance &amp; add-on plans</text>
+
+        <rect class="bx" x="256" y="166" width="214" height="62" rx="6"/>
+        <text class="t" x="266" y="184">Staff access</text>
+        <text class="tool" x="266" y="199">Zimam Keycloak + OCI Bastion</text>
+        <text class="why" x="266" y="214">MFA, recorded admin sessions</text>
+
+        <rect class="bx" x="498" y="166" width="214" height="62" rx="6"/>
+        <text class="t" x="508" y="184">Control-plane DB</text>
+        <text class="tool" x="508" y="199">OCI Database for PostgreSQL</text>
+        <text class="why" x="508" y="214">tenants, plans, jobs, audit</text>
+
+        <rect class="bx" x="740" y="166" width="214" height="62" rx="6"/>
+        <text class="t" x="750" y="184">Observability</text>
+        <text class="tool" x="750" y="199">Prometheus · Grafana · OCI Logs</text>
+        <text class="why" x="750" y="214">SLA alerts, tenant audit logs</text>
+
+        <rect class="bx" x="256" y="256" width="214" height="62" rx="6"/>
+        <text class="t" x="266" y="274">Config repo</text>
+        <text class="tool" x="266" y="289">Git on OCI DevOps</text>
+        <text class="why" x="266" y="304">every change reviewed (NCA)</text>
+
+        <rect class="bx" x="498" y="256" width="214" height="62" rx="6"/>
+        <text class="t" x="508" y="274">Image &amp; extension registry</text>
+        <text class="tool" x="508" y="289">OCI Container Registry + Trivy</text>
+        <text class="why" x="508" y="304">signed images, scanned SPIs</text>
+
+        <rect class="bx" x="740" y="256" width="214" height="62" rx="6"/>
+        <circle class="bd" cx="944" cy="266" r="4"/>
+        <text class="t" x="750" y="274">Cell provisioner</text>
+        <text class="tool" x="750" y="289">Terraform · OCI Resource Mgr</text>
+        <text class="why" x="750" y="304">identical, repeatable cells</text>
+
+        <!-- Platform arrows -->
+        <line class="ar" x1="206" y1="107" x2="254" y2="107" marker-end="url(#ah)"/>
+        <text class="lbl" x="230" y="101" text-anchor="middle">manage</text>
+        <line class="ar" x1="206" y1="197" x2="254" y2="197" marker-end="url(#ah)"/>
+        <text class="lbl" x="230" y="191" text-anchor="middle">MFA</text>
+        <line class="ar" x1="470" y1="107" x2="496" y2="107" marker-end="url(#ah)"/>
+        <text class="lbl" x="484" y="101" text-anchor="middle">REST</text>
+        <line class="ar" x1="712" y1="107" x2="738" y2="107" marker-end="url(#ah)"/>
+        <text class="lbl" x="725" y="101" text-anchor="middle">plans</text>
+        <line class="ar" x1="605" y1="140" x2="605" y2="164" marker-start="url(#ah)" marker-end="url(#ah)"/>
+        <text class="lbl" x="612" y="156">state</text>
+        <path class="ar" d="M712,128 H726 V287 H738" marker-end="url(#ah)"/>
+        <text class="lbl" x="720" y="207" text-anchor="middle" transform="rotate(-90 720 207)">create cell</text>
+
+        <!-- Saudi & external services -->
+        <text class="zt" x="1040" y="46">SAUDI &amp; EXTERNAL SERVICES</text>
+        <rect class="bx" x="1040" y="60" width="220" height="44" rx="6"/>
+        <text class="t" x="1050" y="78">Payments</text>
+        <text class="tool" x="1050" y="94">Moyasar · HyperPay · Tap</text>
+        <rect class="bx" x="1040" y="112" width="220" height="44" rx="6"/>
+        <text class="t" x="1050" y="130">ZATCA Fatoora</text>
+        <text class="tool" x="1050" y="146">mandatory e-invoicing</text>
+        <line class="ar" x1="954" y1="82" x2="1038" y2="82" marker-end="url(#ah)"/>
+        <text class="lbl" x="996" y="76" text-anchor="middle">charge SAR</text>
+        <line class="ar" x1="954" y1="134" x2="1038" y2="134" marker-end="url(#ah)"/>
+        <text class="lbl" x="996" y="128" text-anchor="middle">e-invoice</text>
+
+        <text class="zt" x="1040" y="410">KEYCLOAK CALLS OUT TO</text>
+        <rect class="bx" x="1040" y="420" width="220" height="44" rx="6"/>
+        <text class="t" x="1050" y="438">Nafath</text>
+        <text class="tool" x="1050" y="454">national ID login</text>
+        <rect class="bx" x="1040" y="480" width="220" height="44" rx="6"/>
+        <text class="t" x="1050" y="498">SMS &amp; email OTP</text>
+        <text class="tool" x="1050" y="514">Unifonic · OCI Email Delivery</text>
+        <rect class="bx" x="1040" y="540" width="220" height="44" rx="6"/>
+        <text class="t" x="1050" y="558">Customer identity providers</text>
+        <text class="tool" x="1050" y="574">Entra ID · AD/LDAP · Google</text>
+        <line class="ar" x1="980" y1="442" x2="1038" y2="442" marker-end="url(#ah)"/>
+        <text class="lbl" x="1009" y="436" text-anchor="middle">login</text>
+        <line class="ar" x1="980" y1="502" x2="1038" y2="502" marker-end="url(#ah)"/>
+        <text class="lbl" x="1009" y="496" text-anchor="middle">OTP</text>
+        <line class="ar" x1="980" y1="562" x2="1038" y2="562" marker-end="url(#ah)"/>
+        <text class="lbl" x="1009" y="556" text-anchor="middle">federate</text>
+
+        <!-- Platform <-> cells -->
+        <line class="ar" x1="640" y1="372" x2="640" y2="334" marker-end="url(#ah)"/>
+        <line class="ar" x1="790" y1="372" x2="790" y2="334" marker-end="url(#ah)"/>
+        <text class="lbl" x="252" y="350">▲ cells only call out (mTLS): pull tenants, config, images</text>
+        <text class="lbl" x="264" y="364">and push status, usage, metrics</text>
+        <line class="ar dash" x1="847" y1="318" x2="847" y2="370" marker-end="url(#ah)"/>
+        <text class="lbl" x="856" y="352">creates cells (Terraform)</text>
+
+        <!-- Pooled cell -->
+        <rect class="zone" x="236" y="372" width="504" height="352" rx="10"/>
+        <text class="zt" x="252" y="394">POOLED CELL · STARTER + BUSINESS · OKE, 3 FAULT DOMAINS</text>
+
+        <rect class="bx" x="420" y="406" width="304" height="54" rx="6"/>
+        <circle class="bd" cx="714" cy="416" r="4"/>
+        <text class="t" x="430" y="423">Cell agent</text>
+        <text class="tool" x="430" y="437">Java Operator SDK · Quarkus</text>
+        <text class="why" x="430" y="451">pulls tenants, reconciles, sends usage</text>
+
+        <rect class="bx" x="252" y="488" width="146" height="132" rx="6"/>
+        <text class="t" x="262" y="506">Edge</text>
+        <text class="tool" x="262" y="522">OCI WAF</text>
+        <text class="tool" x="262" y="536">OCI Load Balancer</text>
+        <text class="tool" x="262" y="550">Envoy Gateway</text>
+        <text class="tool" x="262" y="564">cert-manager</text>
+        <text class="why" x="262" y="584">TLS, bot filtering,</text>
+        <text class="why" x="262" y="598">routes by hostname</text>
+
+        <rect class="core" x="420" y="488" width="150" height="54" rx="6"/>
+        <circle class="bd" cx="560" cy="498" r="4"/>
+        <text class="t" x="430" y="505">Keycloak · shared</text>
+        <text class="tool" x="430" y="519">Starter realms</text>
+        <text class="why" x="430" y="533">~200 realms, themes</text>
+
+        <rect class="core" x="420" y="566" width="150" height="54" rx="6"/>
+        <circle class="bd" cx="560" cy="576" r="4"/>
+        <text class="t" x="430" y="583">Keycloak · tenant</text>
+        <text class="tool" x="430" y="597">Business instance</text>
+        <text class="why" x="430" y="611">own pods, DB, SPIs</text>
+
+        <rect class="bx" x="592" y="488" width="132" height="132" rx="6"/>
+        <text class="t" x="602" y="506">Keycloak</text>
+        <text class="t" x="602" y="521">Operator</text>
+        <text class="tool" x="602" y="538">official, upstream</text>
+        <text class="why" x="602" y="558">deploys, scales</text>
+        <text class="why" x="602" y="572">and upgrades</text>
+        <text class="why" x="602" y="586">every Keycloak</text>
+
+        <rect class="bx" x="252" y="650" width="146" height="54" rx="6"/>
+        <text class="t" x="262" y="667">Cell plumbing</text>
+        <text class="tool" x="262" y="681">Flux · Fluent Bit</text>
+        <text class="why" x="262" y="695">pull config, ship logs</text>
+
+        <rect class="bx" x="420" y="650" width="150" height="54" rx="6"/>
+        <text class="t" x="430" y="667">OCI PostgreSQL</text>
+        <text class="tool" x="430" y="681">HA · PITR backups</text>
+        <text class="why" x="430" y="695">DB per Business tenant</text>
+
+        <rect class="bx" x="592" y="650" width="132" height="54" rx="6"/>
+        <text class="t" x="602" y="667">OCI Vault</text>
+        <text class="tool" x="602" y="681">secrets &amp; keys</text>
+        <text class="why" x="602" y="695">master key per cell</text>
+
+        <line class="ar" x1="206" y1="555" x2="250" y2="555" marker-end="url(#ah)"/>
+        <text class="lbl" x="228" y="549" text-anchor="middle">log in</text>
+        <line class="ar" x1="495" y1="460" x2="495" y2="486" marker-end="url(#ah)"/>
+        <text class="lbl" x="501" y="477">realms</text>
+        <line class="ar" x1="658" y1="460" x2="658" y2="486" marker-end="url(#ah)"/>
+        <text class="lbl" x="664" y="477">CRs</text>
+        <line class="ar" x1="398" y1="515" x2="418" y2="515" marker-end="url(#ah)"/>
+        <line class="ar" x1="398" y1="593" x2="418" y2="593" marker-end="url(#ah)"/>
+        <line class="ar" x1="592" y1="515" x2="572" y2="515" marker-end="url(#ah)"/>
+        <line class="ar" x1="592" y1="593" x2="572" y2="593" marker-end="url(#ah)"/>
+        <line class="ar" x1="495" y1="620" x2="495" y2="648" marker-end="url(#ah)"/>
+        <text class="lbl" x="501" y="638">data</text>
+
+        <!-- Dedicated cell -->
+        <rect class="zone" x="760" y="372" width="220" height="352" rx="10"/>
+        <text class="zt" x="776" y="394">DEDICATED · ENTERPRISE</text>
+
+        <rect class="bx" x="776" y="406" width="188" height="52" rx="6"/>
+        <text class="t" x="786" y="423">Private edge</text>
+        <text class="tool" x="786" y="437">WAF · FastConnect · VPN</text>
+        <text class="why" x="786" y="450">can skip the public internet</text>
+
+        <rect class="bx" x="776" y="472" width="188" height="52" rx="6"/>
+        <circle class="bd" cx="954" cy="482" r="4"/>
+        <text class="t" x="786" y="489">Cell agent + Operator</text>
+        <text class="tool" x="786" y="503">same as pooled cell</text>
+        <text class="why" x="786" y="516">one customer only</text>
+
+        <rect class="core" x="776" y="538" width="188" height="52" rx="6"/>
+        <circle class="bd" cx="954" cy="548" r="4"/>
+        <text class="t" x="786" y="555">Keycloak · dedicated</text>
+        <text class="tool" x="786" y="569">customer's own cluster</text>
+        <text class="why" x="786" y="582">any SPI, pinned version</text>
+
+        <rect class="bx" x="776" y="604" width="188" height="52" rx="6"/>
+        <text class="t" x="786" y="621">PostgreSQL + Vault HSM</text>
+        <text class="tool" x="786" y="635">customer-held keys (BYOK)</text>
+        <text class="why" x="786" y="648">own compartment &amp; VCN</text>
+
+        <line class="ar" x1="870" y1="524" x2="870" y2="536" marker-end="url(#ah)"/>
+        <line class="ar" x1="870" y1="590" x2="870" y2="602" marker-end="url(#ah)"/>
+
+        <!-- DR -->
+        <rect class="zone" x="236" y="752" width="744" height="114" rx="10"/>
+        <text class="zt" x="252" y="773">OCI JEDDAH · DISASTER RECOVERY</text>
+        <rect class="bx" x="256" y="784" width="330" height="62" rx="6"/>
+        <text class="t" x="266" y="802">Cross-region backups</text>
+        <text class="tool" x="266" y="817">OCI Object Storage replication</text>
+        <text class="why" x="266" y="832">every tier · restore from backup</text>
+        <rect class="bx" x="610" y="784" width="350" height="62" rx="6"/>
+        <text class="t" x="620" y="802">Warm standby</text>
+        <text class="tool" x="620" y="817">PostgreSQL replica + scaled-down cell</text>
+        <text class="why" x="620" y="832">Enterprise incl. · Business add-on · RPO 15 min / RTO 1 h</text>
+
+        <line class="ar dash" x1="495" y1="704" x2="495" y2="782" marker-end="url(#ah)"/>
+        <text class="lbl" x="502" y="742">backup copy</text>
+        <line class="ar dash" x1="870" y1="656" x2="870" y2="782" marker-end="url(#ah)"/>
+        <text class="lbl" x="877" y="742">replicate</text>
+      </svg>
+    </div>
+    <figcaption>
+      <span class="key"><span class="sw core"></span>Keycloak runtime</span>
+      <span class="key"><span class="dot"></span>Zimam builds or extends it (custom code)</span>
+      <span class="key"><span class="dl"></span>Provisioning or async copy</span>
+      <span>End users reach dedicated cells through the customer's own domain or private link. Starter and Business share pooled cells.</span>
+    </figcaption>
+  </figure>
+
+  <section style="display:grid; gap:14px">
+    <h2>What we need and why</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Need</th><th>Tool</th><th>Why this one</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr class="grp"><th colspan="4">Control plane</th></tr>
+          <tr><td class="need">Customer portal</td><td class="tool">React, Arabic + English</td><td>Self-serve sign-up and tenant management, right-to-left from day one</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Zimam API</td><td class="tool">Java 21 · Quarkus · OpenAPI</td><td>Same language as the Keycloak extensions, so a small team works in one stack. Fast startup, small memory footprint.</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Control-plane database</td><td class="tool">OCI Database with PostgreSQL</td><td>Managed high availability and backups, with no database admin needed</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Cell provisioner</td><td class="tool">Terraform · OCI Resource Manager</td><td>Every cell is built from the same code; plan and apply history doubles as audit evidence</td><td><span class="chip build">Build modules</span></td></tr>
+          <tr><td class="need">Config repo + GitOps</td><td class="tool">Git (OCI DevOps) + Flux</td><td>Each cell pulls its own config, so the control plane never needs a network path into a customer's cell</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Registry and scanning</td><td class="tool">OCI Container Registry · Trivy · Cosign</td><td>Only signed, scanned images and customer extension JARs reach a cell</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Staff access</td><td class="tool">Zimam's own Keycloak · OCI Bastion</td><td>Staff MFA, time-limited sessions, no standing production access (NCA ECC)</td><td><span class="chip oci">OCI</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Inside every cell</th></tr>
+          <tr><td class="need">Kubernetes</td><td class="tool">OKE</td><td>Managed control plane, nodes spread across three fault domains</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Keycloak runtime</td><td class="tool">Keycloak + Keycloak Operator</td><td>The official operator handles deploys, scaling and rolling upgrades</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Cell agent</td><td class="tool">Java Operator SDK</td><td>Turns tenant records into realms, instances and databases; reports status and usage back</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Zimam extensions</td><td class="tool">Keycloak SPIs</td><td>Nafath login, MAU metering (event listener), Arabic themes. These are the local features competitors lack.</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">Edge</td><td class="tool">OCI WAF · Load Balancer · Envoy Gateway · cert-manager</td><td>Bot and DDoS filtering, TLS for wildcard and customer domains, routing by hostname</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Database</td><td class="tool">OCI Database with PostgreSQL</td><td>One HA server per cell, separate database and credentials per Business tenant, point-in-time restore</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Secrets and keys</td><td class="tool">OCI Vault (HSM for dedicated)</td><td>Master key per cell; Gov customers can hold their own keys</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Telemetry</td><td class="tool">Fluent Bit · Prometheus agent</td><td>Logs and login events tagged with tenant ID; metrics for SLA reporting</td><td><span class="chip">Open source</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Billing and Saudi services</th></tr>
+          <tr><td class="need">Billing</td><td class="tool">Lago, self-hosted</td><td>Usage-based plans (MAU, instance size, add-ons) without custom billing code; billing data stays in KSA</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Payments</td><td class="tool">Moyasar, HyperPay or Tap</td><td>Saudi-licensed, supports mada and SAR. Pick one.</td><td><span class="chip">SaaS</span></td></tr>
+          <tr><td class="need">E-invoicing</td><td class="tool">ZATCA Fatoora connector</td><td>Legally required. Lago will most likely need a connector to produce ZATCA-compliant invoices.</td><td><span class="chip build">Build or buy</span></td></tr>
+          <tr><td class="need">National ID login</td><td class="tool">Nafath</td><td>The main local differentiator for government and banking buyers</td><td><span class="chip">Gov integration</span></td></tr>
+          <tr><td class="need">OTP delivery</td><td class="tool">Unifonic · OCI Email Delivery</td><td>Registered Saudi SMS sender IDs; email sent from within the region</td><td><span class="chip">SaaS</span> <span class="chip oci">OCI</span></td></tr>
+
+          <tr class="grp"><th colspan="4">Operations and recovery</th></tr>
+          <tr><td class="need">Observability</td><td class="tool">Prometheus · Grafana · OCI Logging</td><td>SLA tracking, alerting, per-tenant audit log export to customer SIEMs</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Public status page</td><td class="tool">Upptime or similar</td><td>Every competitor reviewed publishes one; buyers expect it</td><td><span class="chip">Open source</span></td></tr>
+          <tr><td class="need">Disaster recovery</td><td class="tool">Object Storage replication · PostgreSQL replica in Jeddah</td><td>Off-region backups for every tier; warm standby for Enterprise and the Business DR add-on</td><td><span class="chip oci">OCI managed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section class="note">
+      <h2>Changed since the control-plane section</h2>
+      <ul>
+        <li><strong>Flux in each cell instead of one central Argo CD.</strong> Cells pull their config, so dedicated Gov cells never accept inbound connections from the control plane.</li>
+        <li><strong>Envoy Gateway instead of ingress-nginx.</strong> The ingress-nginx project was retired in March 2026 and no longer receives security fixes.</li>
+      </ul>
+    </section>
+    <section class="note">
+      <h2>Check before committing</h2>
+      <ul>
+        <li>OKE and OCI Database with PostgreSQL, including cross-region replicas, are available in both Riyadh and Jeddah.</li>
+        <li>Nafath access: the agreement and approval process with the operator, and its lead time.</li>
+        <li>How Lago invoices reach ZATCA Fatoora (Phase 2 integration).</li>
+        <li>Payment gateway onboarding requirements for your commercial registration.</li>
+      </ul>
+    </section>
+  </div>
+</main>
