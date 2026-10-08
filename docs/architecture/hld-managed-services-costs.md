@@ -374,6 +374,20 @@ From the [competitor analysis](../market/ksa-competitor-analysis.md#pricing-prin
 
 The two Gov security add-ons run at low margin on purpose: they are mostly Oracle pass-through. The Enterprise contract carries the margin. Where possible, steer customers to the cheaper option (BYOK, shared hub firewall).
 
+### 8.3a AI add-ons (proposed, Phase 2)
+
+Designed in the [AI strategy](../product/ai-strategy.md). Costs come from the `AI_BLOCKS` and `ai_book()` sections of `cost_model.py` and are kept apart from the core price book.
+
+| Add-on | For | Price SAR / month | Cost SAR | Margin |
+|---|---|---|---|---|
+| Zimam Protect (risk-based login) | Starter 5k / 10k / 25k / 50k | 100 / 200 / 500 / 1,000 | 10 / 14 / 29 / 48 | 90–95% |
+| Zimam Protect | Business S / M / L | 500 / 1,000 / 2,000 | 19 / 39 / 77 | 96% |
+| Zimam Protect | Enterprise S (included in M and L) | 1,500 | 579 | 61% |
+| Zimam Assist (copilot), extra 100 requests | All (quota of 50 / 300 / 1,000 included) | 75 | 28 | 63% |
+| Agent Pack (preview) | Business (included in Enterprise later) | 750 | ~19 | — |
+
+Protect costs SAR 579 a month per pooled or Enterprise S cell, Jeddah standby included. With the full Assist quota, Enterprise margins are 57% (S), 54% (M) and 54% (L).
+
 ### 8.4 Competitive check
 
 | Usage | Zimam | Market anchors (from the competitor analysis) |

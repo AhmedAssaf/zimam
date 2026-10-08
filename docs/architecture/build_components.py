@@ -35,6 +35,7 @@ PICTOS = [
     "refresh-cw", "shield-check", "key-round", "cable", "database", "credit-card",
     "file-check", "fingerprint", "message-square", "building-2", "archive", "copy",
     "landmark", "headset", "radar", "shield-alert", "tag",
+    "sparkles", "bot", "gauge", "cpu",
 ]
 ALLOWED = re.compile(r"^\s*(<(path|circle|rect|line|polyline|polygon|ellipse)\b[^<>]*/>\s*)*$")
 
@@ -302,6 +303,20 @@ def diagram():
                                f"Gov options + {usd(cm.total('Gov pack (per dedicated cell)'))}"]))
     g.append(pill(860, 1151, [f"Standby S {usd(dr['S'])} · M {usd(dr['M'])} · L {usd(dr['L'])} USD / mo"]))
 
+    # AI, Phase 2 (docs/product/ai-strategy.md). Everything stays in OCI Riyadh.
+    g.append(zone(240, 1300, 920, 140, "sparkles", "AI · PHASE 2 · OCI RIYADH, NO DATA LEAVES THE KINGDOM"))
+    g.append(card(264, 1346, 200, "gauge", "Zimam Protect", "risk service in every cell"))
+    g.append(card(488, 1346, 200, "cpu", "OCI Data Science", "trains risk model, CPU"))
+    g.append(card(712, 1346, 200, "bot", "AI gateway + MCP", "Zimam API · redaction"))
+    g.append(card(936, 1346, 200, "sparkles", "OCI Generative AI", "Riyadh · Command A"))
+    g.append(arrow("M488,1378 H466", "model", 476, 1340, "middle"))
+    g.append(arrow("M912,1378 H934", "prompts", 924, 1340, "middle"))
+    g.append(f'<text class="lbl" x="264" y="1430">Keycloak asks Protect for a score in 50 ms; no LLM decides a login. '
+             f'Assist is unavailable in Jeddah DR; logins are not.</text>')
+    req = cm.genai(cm.ASSIST_CHARS)
+    g.append(pill(1152, 1440, [f"Protect {usd(cm.ai_total('Zimam Protect, pooled cell'))} / cell · Assist {req:.3f} / request",
+                               f"Self-hosted A10 GPU {usd(sum(cm.SELF_HOSTED_A10.values()))} / region, USD / mo"]))
+
     return "\n".join(g)
 
 
@@ -345,6 +360,21 @@ def costs_html():
         prices.append(row([("need", esc(n)), ("num", usd(price)), ("num", usd(c)),
                            ("num", f"{(price - c) / price:.0%}")]))
 
+    ai_rows = []
+    for name, (primary, dr_) in cm.AI_BLOCKS.items():
+        v = cm.ai_total(name)
+        ai_rows.append(row([("need", esc(name)), ("", esc("; ".join(list(primary) + list(dr_)))),
+                            ("num", usd(v)), ("num", usd(v * sar))]))
+    gpu = sum(cm.SELF_HOSTED_A10.values())
+    ai_rows.append(row([("need", "Self-hosted model, per region"), ("", "1 x A10 GPU, 200 GB volume; pays off above "
+                        f"{usd(gpu / cm.genai(cm.ASSIST_CHARS))} Assist requests a month"),
+                        ("num", usd(gpu)), ("num", usd(gpu * sar))]))
+    ai_prices = []
+    for n, (price, cost) in cm.ai_book().items():
+        c = cost * sar
+        ai_prices.append(row([("need", esc(n)), ("num", usd(price)), ("num", usd(c)),
+                              ("num", f"{(price - c) / price:.0%}")]))
+
     return f"""
   <section style="display:grid; gap:14px">
     <h2>What it costs per month</h2>
@@ -359,6 +389,20 @@ def costs_html():
       <table>
         <thead><tr><th>Plan</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
         <tbody>{"".join(prices)}</tbody>
+      </table>
+    </div>
+    <h2>AI add-ons (Phase 2)</h2>
+    <p class="lede">From <code>AI_BLOCKS</code> and <code>ai_book()</code> in <code>cost_model.py</code>; design in <code>docs/product/ai-strategy.md</code>. Assist costs USD {cm.genai(cm.ASSIST_CHARS):.3f} (SAR {cm.genai(cm.ASSIST_CHARS) * sar:.2f}) per request on OCI Generative AI.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>AI building block</th><th>What's in it</th><th class="num">USD / mo</th><th class="num">SAR / mo</th></tr></thead>
+        <tbody>{"".join(ai_rows)}</tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>AI add-on</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
+        <tbody>{"".join(ai_prices)}</tbody>
       </table>
     </div>
   </section>

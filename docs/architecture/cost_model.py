@@ -229,6 +229,84 @@ def price_book():
     return book
 
 
+# --- AI features (docs/product/ai-strategy.md) --------------------------------
+# OCI Generative AI on-demand price for "Large Cohere". ASSUMPTION: this SKU
+# covers Cohere Command A in Riyadh; confirm with Oracle.
+GENAI_LARGE_COHERE_PER_10K_CHARS = 0.0156
+GPU_A10_H = 2.00                                 # per GPU-hour, OCI list
+ASSIST_CHARS = 3 * (15_000 + 1_000)              # one request: 3 LLM turns, 15k chars in + 1k out
+THEME_CHARS = 5 * (8_000 + 4_000)                # one generated theme: 5 LLM calls
+ASSIST_QUOTA = {"Starter": 50, "Business": 300, "Enterprise": 1000}  # included requests per month
+PROTECT_SUBSCRIBERS_PER_CELL = 60                # ASSUMPTION: 25% of a full pooled cell's 240 tenants buy Protect
+AGENT_PACK_USD = 5.0                             # audit log volume and vault secrets per tenant (placeholder)
+
+
+def genai(chars):
+    return chars / 10_000 * GENAI_LARGE_COHERE_PER_10K_CHARS
+
+
+def protect_cell(ocpu_per_pod=1, pods=2):
+    """Zimam Protect in one cell: risk service, velocity cache, local datasets,
+    scheduled training on OCI Data Science (CPU), and a one-pod Jeddah standby."""
+    primary = {
+        f"Risk service {pods} pods, E5 {ocpu_per_pod} OCPU / {4 * ocpu_per_pod} GB":
+            PACKING * node(ocpu_per_pod, 4 * ocpu_per_pod, pods),
+        "OCI Cache 2 GB (velocity counters)": 2 * HOURS * CACHE_GB_H,
+        "Block volume 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords)": 50 * BLOCK_GB_M,
+        "Training, OCI Data Science (~40 h of E5 2 OCPU / 16 GB)": 40 * (2 * E5_OCPU_H + 16 * E5_GB_H),
+    }
+    dr = {
+        "Jeddah standby: 1 risk pod, 1 GB cache, datasets":
+            PACKING * node(ocpu_per_pod, 4 * ocpu_per_pod, 1) + HOURS * CACHE_GB_H + 50 * BLOCK_GB_M,
+    }
+    return primary, dr
+
+
+AI_BLOCKS = {
+    "Zimam Protect, pooled cell": protect_cell(1, 2),
+    "Zimam Protect, Enterprise S cell": protect_cell(1, 2),
+    "Zimam Protect, Enterprise M cell": protect_cell(2, 2),
+    "Zimam Protect, Enterprise L cell": protect_cell(2, 4),
+}
+SELF_HOSTED_A10 = {
+    "1 x A10 GPU, 730 h": HOURS * GPU_A10_H,
+    "Block volume 200 GB (model weights, boot)": 200 * BLOCK_GB_M,
+}
+
+
+def ai_total(name):
+    primary, dr = AI_BLOCKS[name]
+    return sum(primary.values()) + sum(dr.values())
+
+
+def protect_alloc(weight):
+    return ai_total("Zimam Protect, pooled cell") / PROTECT_SUBSCRIBERS_PER_CELL * weight
+
+
+def ai_book():
+    """AI add-ons, kept apart from price_book() so the core plans are unchanged.
+    name: (price SAR, monthly cost USD). Weights scale with login volume."""
+    book = {}
+    for band, price, w in (("5k", 100, 1), ("10k", 200, 1.5), ("25k", 500, 3), ("50k", 1000, 5)):
+        book[f"Protect, Starter {band}"] = (price, protect_alloc(w))
+    for size, price, w in (("S", 500, 2), ("M", 1000, 4), ("L", 2000, 8)):
+        book[f"Protect, Business {size}"] = (price, protect_alloc(w))
+    book["Protect, Enterprise S"] = (1500, ai_total("Zimam Protect, Enterprise S cell"))
+    book["Assist, 100 extra requests"] = (75, 100 * genai(ASSIST_CHARS))
+    book["Agent Pack, Business (preview)"] = (750, AGENT_PACK_USD)
+    return book
+
+
+PROTECT_INCLUDED = ("M", "L")   # Enterprise S buys Protect as an add-on to stay above 55% margin
+
+
+def enterprise_with_ai(size):
+    """Enterprise cost with the full Assist quota, plus Protect where it is included."""
+    base = total(f"Dedicated cell {size} (Enterprise)") + total(f"DR warm standby {size} (Jeddah)")
+    protect = ai_total(f"Zimam Protect, Enterprise {size} cell") if size in PROTECT_INCLUDED else 0
+    return base + protect + ASSIST_QUOTA["Enterprise"] * genai(ASSIST_CHARS)
+
+
 def fmt(usd):
     return f"{usd:,.0f}"
 
@@ -248,6 +326,32 @@ def summary():
         "launch": round(launch * SAR),
         "pg_share": round(pooled["Cell PostgreSQL HA, 4 OCPU / 64 GB x2, 500 GB"]
                           / total("Pooled cell (fixed base)") * 100),
+        "ai": ai_summary(),
+    }
+
+
+def ai_summary():
+    req = genai(ASSIST_CHARS)
+    gpu = sum(SELF_HOSTED_A10.values())
+    ent = {}
+    for z, p in (("S", 11250), ("M", 24000), ("L", 45000)):
+        base = total(f"Dedicated cell {z} (Enterprise)") + total(f"DR warm standby {z} (Jeddah)")
+        ent[z] = {"price": p, "margin": round((p - base * SAR) / p * 100),
+                  "margin_with_ai": round((p - enterprise_with_ai(z) * SAR) / p * 100)}
+    return {
+        "protect_cell": round(ai_total("Zimam Protect, pooled cell") * SAR),
+        "protect_cell_primary": round(sum(AI_BLOCKS["Zimam Protect, pooled cell"][0].values()) * SAR),
+        "protect_cell_dr": round(sum(AI_BLOCKS["Zimam Protect, pooled cell"][1].values()) * SAR),
+        "protect_enterprise": {z: round(ai_total(f"Zimam Protect, Enterprise {z} cell") * SAR) for z in "SML"},
+        "assist_request_sar": round(req * SAR, 2),
+        "assist_quota_cost": {t: round(q * req * SAR) for t, q in ASSIST_QUOTA.items()},
+        "assist_quota": ASSIST_QUOTA,
+        "theme_sar": round(genai(THEME_CHARS) * SAR, 2),
+        "gpu_a10_month": round(gpu * SAR),
+        "gpu_breakeven_requests": int(round(gpu / req, -3)),
+        "enterprise": ent,
+        "book": {n: {"price": p, "cost": round(c * SAR), "margin": round((p - c * SAR) / p * 100)}
+                 for n, (p, c) in ai_book().items()},
     }
 
 
@@ -282,3 +386,25 @@ if __name__ == "__main__":
     for name, (price, cost_usd) in price_book().items():
         cost = cost_usd * SAR
         print(f"| {name} | {fmt(price)} | {fmt(cost)} | {fmt(price - cost)} | {(price - cost) / price:.0%} |")
+
+    print("\n## AI building blocks (USD per month, primary + Jeddah standby)")
+    for name, (primary, dr) in AI_BLOCKS.items():
+        print(f"\n### {name}")
+        for item, cost in {**primary, **dr}.items():
+            print(f"| {item} | {cost:,.1f} |")
+        t = ai_total(name)
+        print(f"| **Total** | **{fmt(t)}** (SAR {fmt(t * SAR)}) |")
+    gpu = sum(SELF_HOSTED_A10.values())
+    req = genai(ASSIST_CHARS)
+    print(f"\nSelf-hosted model on one A10: USD {fmt(gpu)} / SAR {fmt(gpu * SAR)} per region per month")
+    print(f"Assist request: USD {req:.3f} / SAR {req * SAR:.2f}; GPU break-even {gpu / req:,.0f} requests a month")
+    print(f"Theme generation: SAR {genai(THEME_CHARS) * SAR:.2f} per theme")
+    for tier, q in ASSIST_QUOTA.items():
+        print(f"Assist quota {tier}: {q} requests = SAR {q * req * SAR:,.0f} at full use")
+    print("\n## AI add-ons: price SAR | cost SAR | contribution SAR | gross margin")
+    for name, (price, cost_usd) in ai_book().items():
+        cost = cost_usd * SAR
+        print(f"| {name} | {fmt(price)} | {fmt(cost)} | {fmt(price - cost)} | {(price - cost) / price:.0%} |")
+    print("\n## Enterprise margin: base | with full Assist quota (+ Protect on M and L)")
+    for z, e in ai_summary()["enterprise"].items():
+        print(f"| Enterprise {z} | {e['margin']}% | {e['margin_with_ai']}% |")

@@ -381,6 +381,75 @@ async function build() {
   }
   s.addNotes("Levers 3 and 2 depend on load tests; lever 1 needs about six months of spend history; levers 5 and 6 come up in the first Gov sales conversations.");
 
+  // ===== AI section (docs/product/ai-strategy.md) =====
+  const AI = N.ai;
+  const AB = AI.book;
+  pres.addSection({ title: "AI" });
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "AI" });
+  s.addText("Competitors charge a premium for AI, outside KSA", { placeholder: "title" });
+  const comp = [
+    ["Auth0", "Bot Detection, Adaptive MFA", "AI Agents add-on, Token Vault", "Risk: Enterprise only · Agents: +50% of plan"],
+    ["Okta", "Identity Threat Protection", "Agent SSO, Okta for AI Agents", "ITP add-on · Agent SSO included"],
+    ["Microsoft Entra", "ID Protection (P2)", "Entra Agent ID", "P2 USD 10/user · Copilot USD 4/SCU-hour"],
+    ["Ping Identity", "PingOne Protect (ML)", "Identity for AI", "Not public; plans from USD 35k/year"],
+    ["AWS Cognito", "Plus threat protection", "–", "USD 0.02/MAU (SAR 750 at 10k MAU)"],
+    ["WSO2", "Sift risk score", "Agent ID, LoginFlow AI", "Fraud: Enterprise add-on, not public"],
+    ["Managed Keycloak", "None", "Admin MCP server only", "–"],
+    ["Oracle OCI IAM", "Rules-based risk, in-Kingdom", "–", "Included"],
+  ];
+  s.addTable(tableRows(["Vendor", "Login risk / fraud AI", "AI agents", "AI price"], comp), { x: 0.6, y: 1.5, w: 12.1, colW: [2.2, 3.3, 3.1, 3.5], fontSize: 13, rowH: 0.48, border: { type: "solid", color: HEX.lt1, pt: 1 }, valign: "middle", margin: [0.04, 0.12, 0.04, 0.12] });
+  await badge(s, "LuGlobe", 0.6, 6.0, 0.5, false, false);
+  text(s, "None of the global vendors documents AI features hosted in KSA. Managed-Keycloak rivals have no risk scoring at all.", { x: 1.25, y: 6.07, w: 11.4, h: 0.5, fontSize: 13, color: C.accent5 });
+  s.addNotes("Sources and dates are in docs/product/ai-strategy.md section 3 (research date 8 October 2026). Okta ITP, Ping Protect and Auth0 Bot Detection prices are sales-quoted. Oracle's Adaptive Security is the only in-Kingdom risk engine we found, and it is rule-based.");
+
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "AI" });
+  s.addText("Three AI add-ons, all running in the Kingdom", { placeholder: "title" });
+  const aiOffers = [
+    ["LuShieldCheck", "Zimam Protect", "Risk-based login", `SAR ${sar(AB["Protect, Business S"].price)}–${sar(AB["Protect, Business L"].price)}`, "Business S–L; Starter from SAR 100; included in Enterprise M and L",
+      "Rules then ML scoring in each cell, no LLM. Step-up to passkey, OTP or Nafath.", `Costs SAR ${sar(AI.protect_cell)} a month per cell`],
+    ["LuMessageSquare", "Zimam Assist", "Arabic/English copilot", "Included", `${AI.assist_quota.Starter} / ${AI.assist_quota.Business} / ${sar(AI.assist_quota.Enterprise)} requests a month; extra SAR ${AB["Assist, 100 extra requests"].price} per 100`,
+      "OCI Generative AI in Riyadh. Every config change is a diff the admin approves.", `Costs SAR ${AI.assist_request_sar} a request`],
+    ["LuBot", "Agent Pack", "Identity for AI agents", `SAR ${sar(AB["Agent Pack, Business (preview)"].price)}`, "Business, preview; Enterprise later",
+      "Keycloak MCP authorization, token exchange and CIBA approvals, packaged in the portal.", "Mostly engineering cost"],
+  ];
+  for (let i = 0; i < 3; i++) {
+    const [ic, name, sub, price, where, how, cost] = aiOffers[i];
+    const x = 0.6 + i * 4.1;
+    card(s, x, 1.6, 3.85, 5.0, `ai offer ${name}`);
+    await badge(s, ic, x + 0.35, 1.9, 0.7, i === 0);
+    text(s, name, { x: x + 0.35, y: 2.8, w: 3.2, h: 0.5, fontFace: THEME.headFontFace, fontSize: 24, bold: true, color: C.text2 });
+    text(s, sub, { x: x + 0.35, y: 3.3, w: 3.2, h: 0.35, fontSize: 14, color: C.accent5 });
+    text(s, price, { x: x + 0.35, y: 3.7, w: 3.2, h: 0.5, fontSize: 20, bold: true, color: C.accent1 });
+    text(s, where, { x: x + 0.35, y: 4.2, w: 3.2, h: 0.7, fontSize: 12, color: C.accent5 });
+    text(s, how, { x: x + 0.35, y: 4.95, w: 3.2, h: 0.95, fontSize: 14, color: C.text1 });
+    text(s, cost, { x: x + 0.35, y: 5.95, w: 3.2, h: 0.4, fontSize: 13, bold: true, color: C.text2 });
+  }
+  s.addNotes("Also included at no charge: an admin MCP server (customers bring their own AI client, so no LLM cost to us and residency is their choice) and an AI login-theme generator (about SAR 0.35 per theme). Rule: an LLM never makes the allow or deny decision at login.");
+
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "AI" });
+  s.addText("AI add-ons keep margins above 60%", { placeholder: "title" });
+  const am = [["Protect, Starter 10k", "Protect, Starter 10k"], ["Protect, Business S", "Protect, Business S"], ["Protect, Business L", "Protect, Business L"], ["Protect, Enterprise S", "Protect, Enterprise S"], ["Assist, extra 100 requests", "Assist, 100 extra requests"], ["Agent Pack", "Agent Pack, Business (preview)"]];
+  s.addChart(pres.charts.BAR, [{ name: "Gross margin", labels: am.map((m) => m[0]), values: am.map((m) => AB[m[1]].margin / 100) }], {
+    x: 0.6, y: 1.5, w: 7.9, h: 5.2, barDir: "bar", catAxisOrientation: "maxMin",
+    chartColors: [HEX.accent1, HEX.accent1, HEX.accent1, HEX.dk2, HEX.accent2, HEX.accent3],
+    showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "0%", showTitle: true, title: "Infrastructure gross margin by AI add-on", titleFontSize: 14, titleColor: HEX.dk2,
+    valAxisMinVal: 0, valAxisMaxVal: 1.1, valGridLine: { color: "E1E8E3", size: 0.75 }, catGridLine: { style: "none" }, valAxisHidden: true, showLegend: false, ...AXIS,
+  });
+  const E = AI.enterprise;
+  const aiNotes = [
+    ["LuServer", `SAR ${sar(AI.protect_cell)} a cell`, "Protect's whole cost, Jeddah standby included. Two Business S subscribers cover it."],
+    ["LuLandmark", `S ${E.S.margin_with_ai}% · M/L ${E.M.margin_with_ai}%`, `Enterprise margin with AI. Protect is an add-on on S; on M and L it costs ~${E.M.margin - E.M.margin_with_ai} points.`],
+    ["LuCpu", `${sar(AI.gpu_breakeven_requests)} requests`, `a month before a self-hosted GPU (SAR ${sar(AI.gpu_a10_month)}) beats on-demand OCI Generative AI.`],
+  ];
+  for (let i = 0; i < 3; i++) {
+    const y = 1.6 + i * 1.7;
+    card(s, 8.8, y, 3.9, 1.5, `ai insight ${i + 1}`);
+    await badge(s, aiNotes[i][0], 9.05, y + 0.25, 0.55);
+    text(s, aiNotes[i][1], { x: 9.8, y: y + 0.22, w: 2.8, h: 0.45, fontSize: 18, bold: true, color: C.accent1 });
+    text(s, aiNotes[i][2], { x: 9.8, y: y + 0.65, w: 2.75, h: 0.8, fontSize: 12, color: C.text1 });
+  }
+  s.addNotes(`From cost_model.py. Starter and Business Protect costs assume 60 subscribers per pooled cell. Assist costs SAR ${AI.assist_request_sar} a request at the OCI "Large Cohere" on-demand price, which still has to be confirmed for Command A in Riyadh. Enterprise margins include the full Assist quota of ${sar(AI.assist_quota.Enterprise)} requests.`);
+
   // ===== 14. Open items =====
   pres.addSection({ title: "Decisions" });
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Decisions" });

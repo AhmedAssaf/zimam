@@ -26,7 +26,7 @@
   1. **MVP:** no AI in the login path. Ship an **admin MCP server**, which costs us no LLM spend and leaves residency with the customer's own AI client. Also ship an **AI theme generator** as a demo feature.
   2. **Phase 2:** **Zimam Protect** (risk-based authentication: rules, then ML, all CPU and in-cell) and **Zimam Assist** (an in-portal copilot on OCI Generative AI in Riyadh).
   3. **Phase 2–3:** **Zimam for AI Agents**, packaging Keycloak's MCP and token-exchange features with a portal UX, CIBA approvals and later a token vault.
-- **Cost is small next to the price book.** Protect adds about **SAR 375 a month per cell** (CPU and cache, no GPU). Assist costs about **SAR 0.30 per request** on demand. A self-hosted GPU only pays off above about 18,000 requests a month (section 9).
+- **Cost is small next to the price book.** Protect costs about **SAR 580 a month per cell**, Jeddah standby included (CPU and cache, no GPU). Assist costs about **SAR 0.28 per request** on demand. A self-hosted GPU only pays off above about 20,000 requests a month. All AI numbers come from `cost_model.py` (section 9).
 - **Rule we never break:** an LLM never makes the allow or deny decision at login. Login decisions use deterministic rules and ML scoring that run inside the customer's cell.
 
 ---
@@ -35,7 +35,7 @@
 
 | Area | What AI does | Who pays | AI type | Runs where |
 |---|---|---|---|---|
-| **1. Login path (Zimam Protect)** | Risk score per login: new device, impossible travel, Tor/VPN/hosting IP, velocity, credential stuffing, bots, breached passwords. Drives allow, step-up (OTP, passkey, Nafath) or block. | Business and Starter add-on; Enterprise included | Rules + classic ML (no LLM) | Inside each cell, CPU only |
+| **1. Login path (Zimam Protect)** | Risk score per login: new device, impossible travel, Tor/VPN/hosting IP, velocity, credential stuffing, bots, breached passwords. Drives allow, step-up (OTP, passkey, Nafath) or block. | Starter, Business and Enterprise S add-on; Enterprise M and L included | Rules + classic ML (no LLM) | Inside each cell, CPU only |
 | **2. Admin copilot (Zimam Assist)** | Natural language to Keycloak config with a reviewed diff. Security posture score with explanations. "Why did this user fail to log in?" Theme generator. | Included with quotas | LLM with tools | OCI Generative AI Riyadh, behind an AI gateway in the control plane |
 | **2b. Admin MCP server** | Lets the customer's own AI client (Claude, ChatGPT, Copilot) call Zimam's API with the admin's permissions | Included | None on our side | Zimam API; the customer picks the LLM |
 | **3. Identity for AI agents** | MCP authorization server, agent clients, token exchange on behalf of a user, CIBA human approval, agent audit | Agent Pack add-on | None (OAuth features); AI only in anomaly signals later | Keycloak in the cell |
@@ -125,7 +125,7 @@ Prices are public list prices in USD unless stated, converted at USD 1 = SAR 3.7
 |---|---|---|---|---|---|
 | A1 | **Admin MCP server** over the Zimam API, scoped to the admin's tenant and roles | All paid | MVP+ | Build (Quarkus MCP extension) | 2–3 |
 | A2 | **AI theme generator**: logo and brand colours to an Arabic/English Keycloak login theme | All | MVP+ | Build (LLM + template) | 2 |
-| P1 | **Zimam Protect v1**: rules engine, signals, step-up policy, admin event reasons | Starter add-on, Business add-on, Enterprise included | Phase 2 | Build (Keycloak SPIs + risk service) | 6–8 |
+| P1 | **Zimam Protect v1**: rules engine, signals, step-up policy, admin event reasons | Starter, Business and Enterprise S add-on; Enterprise M and L included | Phase 2 | Build (Keycloak SPIs + risk service) | 6–8 |
 | P2 | **Self-hosted bot challenge** (proof-of-work or self-hosted CAPTCHA, no third-party calls) | With Protect | Phase 2 | Use community extension, harden | 1–2 |
 | P3 | **Breached-password check** against a local copy of the Pwned Passwords dataset | With Protect | Phase 2 | Build | 1 |
 | P4 | **SMS-pumping protection** for OTP (velocity per prefix and country, conversion-rate alerts) | All | Phase 2 | Build | 1–2 |
@@ -216,15 +216,20 @@ flowchart LR
 
 ### 5.5 Running cost
 
+From `python docs/architecture/cost_model.py` (pooled cell and Enterprise S sizing):
+
 | Item | Sizing | USD/month |
 |---|---|---|
-| Risk service | 2 pods, each E5 1 OCPU + 4 GB | 56 |
-| OCI Cache | 2 GB | 28 |
-| Block volume for local datasets | 50 GB | 2 |
-| Training jobs (OCI Data Science, CPU) | A few hours a week | ~10 |
-| **Total per cell** | | **~96 (about SAR 360–375)** |
+| Risk service | 2 pods, each E5 1 OCPU + 4 GB, 25% packing overhead | 69 |
+| OCI Cache | 2 GB (velocity counters) | 28 |
+| Block volume for local datasets | 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords) | 2 |
+| Training jobs (OCI Data Science, CPU) | About 40 hours a month of 2 OCPU / 16 GB | 4 |
+| Jeddah standby | 1 risk pod, 1 GB cache, datasets | 51 |
+| **Total per cell** | | **154 (SAR 579)** |
 
-This uses the unit prices in [managed services and costs §6.1](../architecture/hld-managed-services-costs.md#61-key-unit-prices). A pooled cell holds up to 200 Starter realms and 40 Business instances, so the per-tenant cost is a few riyals. The Jeddah DR copy runs warm at about half that.
+Enterprise M cells use 2 OCPU pods (SAR 969 a month) and Enterprise L cells 4 such pods (SAR 1,489).
+
+This uses the unit prices in [managed services and costs §6.1](../architecture/hld-managed-services-costs.md#61-key-unit-prices). A pooled cell holds up to 200 Starter realms and 40 Business instances, so the per-tenant cost is a few riyals: the model allocates the cell cost across an assumed 60 Protect subscribers (25% of a full cell).
 
 ---
 
@@ -236,7 +241,7 @@ This uses the unit prices in [managed services and costs §6.1](../architecture/
 |---|---|---|
 | Who brings the LLM | The customer (Claude, ChatGPT, Copilot, a local model) | Zimam (OCI Generative AI, Riyadh) |
 | Data residency | Customer's choice and responsibility | Stays in KSA |
-| Our LLM cost | None | About SAR 0.30 per request (section 9.2) |
+| Our LLM cost | None | About SAR 0.28 per request (section 9.2) |
 | Good for | Developers and DevOps teams | Admins who want Arabic, in-Kingdom help without setup; Gov (when enabled) |
 
 Both call the same **tool layer** on the Zimam API, so permissions, audit and guardrails are written once.
@@ -353,10 +358,10 @@ flowchart LR
 | Feature | Cost driver | Estimate |
 |---|---|---|
 | Admin MCP server | Runs in the existing Zimam API | ~0 |
-| Theme generator | About 5 LLM calls per theme | < SAR 2 per theme |
-| Zimam Protect | Risk service, cache, data, training (section 5.5) | ~SAR 375 per cell per month, plus ~SAR 180 for the Jeddah warm copy |
-| Zimam Assist | LLM tokens on demand | ~SAR 0.30 per request (below) |
-| Agent Pack | Keycloak features; token vault later in OCI Vault and PostgreSQL | ~0 infra; engineering cost only |
+| Theme generator | About 5 LLM calls per theme | ~SAR 0.35 per theme |
+| Zimam Protect | Risk service, cache, data, training (section 5.5) | SAR 579 per pooled or Enterprise S cell per month (SAR 388 Riyadh + SAR 191 Jeddah standby); SAR 969 for M, SAR 1,489 for L |
+| Zimam Assist | LLM tokens on demand | ~SAR 0.28 per request (below). Full monthly quota: Starter SAR 14, Business SAR 84, Enterprise SAR 281 |
+| Agent Pack | Keycloak features; token vault later in OCI Vault and PostgreSQL | ~SAR 19 per tenant (audit log volume, vault secrets; placeholder); engineering cost dominates |
 | Ops AI | Developer and support AI tools | Tool subscriptions per seat; no customer data |
 
 ### 9.2 Zimam Assist: on demand vs self-hosted
@@ -365,10 +370,10 @@ Assumed average request: 3 LLM turns × (15,000 characters in + 1,000 out) = 48,
 
 | Option | Cost per request | Monthly cost | Break-even |
 |---|---|---|---|
-| OCI Generative AI on demand, Command A at USD 0.0156 per 10k characters | ~USD 0.075 (**~SAR 0.30**) | Scales with use: 1,000 requests ≈ SAR 280 | – |
-| Self-hosted ALLaM/Qwen 7B on one A10, Riyadh, 24×7 | Fixed | USD 1,460 (**~SAR 5,475**), Jeddah copy doubles it | ~18,000 requests a month |
+| OCI Generative AI on demand, Command A at USD 0.0156 per 10k characters | ~USD 0.075 (**~SAR 0.28**) | Scales with use: 1,000 requests ≈ SAR 281 | – |
+| Self-hosted ALLaM/Qwen 7B on one A10, Riyadh, 24×7 | Fixed | USD 1,468 incl. 200 GB volume (**~SAR 5,507**), Jeddah copy doubles it | ~20,000 requests a month |
 
-**Decision:** start on demand. Move to a self-hosted model or a dedicated cluster only when volume passes about 18,000 requests a month, or when a Gov customer needs Assist in their own cell.
+**Decision:** start on demand. Move to a self-hosted model or a dedicated cluster only when volume passes about 20,000 requests a month, or when a Gov customer needs Assist in their own cell.
 
 ### 9.3 Proposed prices (SAR per month, excluding VAT)
 
@@ -376,14 +381,26 @@ These follow the [price book](../architecture/hld-managed-services-costs.md#82-p
 
 | Product | Starter | Business S / M / L | Enterprise / Gov | Market anchor |
 |---|---|---|---|---|
-| **Zimam Protect** (risk-based auth, bot challenge, breached passwords) | +SAR 0.02 per MAU band (5k = 100, 10k = 200, 25k = 500, 50k = 1,000) | +500 / 1,000 / 2,000 | Included | Cognito Plus adds USD 0.005/MAU (~SAR 0.019) over Essentials [4]; Auth0 and Okta only on Enterprise or add-on, not public [1][2]; OCI IAM includes rules-based risk [48] |
+| **Zimam Protect** (risk-based auth, bot challenge, breached passwords) | +SAR 0.02 per MAU band (5k = 100, 10k = 200, 25k = 500, 50k = 1,000) | +500 / 1,000 / 2,000 | S: +1,500 add-on. M and L: included | Cognito Plus adds USD 0.005/MAU (~SAR 0.019) over Essentials [4]; Auth0 and Okta only on Enterprise or add-on, not public [1][2]; OCI IAM includes rules-based risk [48] |
 | **Zimam Assist** (in-portal copilot) | 50 requests included | 300 included | 1,000 included (Gov: opt-in) | Security Copilot USD 4 per SCU-hour [42]; Ping and WSO2 do not publish prices |
-| Extra Assist requests | SAR 50 per 100 requests | Same | Same | Our cost ~SAR 30 per 100 |
+| Extra Assist requests | SAR 75 per 100 requests | Same | Same | Our cost ~SAR 28 per 100 (63% margin) |
 | **Admin MCP server** | Included | Included | Included | Included at Okta (EA), Cloud-IAM, Skycloak [9][5][6] |
 | **AI theme generator** | Included | Included | Included | WSO2 AI branding [13] |
 | **Agent Pack** (MCP registration, token-exchange templates, CIBA approvals, agent audit) | – | +750 (preview) | Included once upstream features are supported | Auth0 +50% of plan [2]; Okta Agent SSO included [15]; Descope agent quotas from USD 249/month [55] |
 
-Margins: Protect costs a pooled cell about SAR 375 a month in total, so two Business S add-ons cover the whole cell. At full Assist quota a Business tenant costs about SAR 90 a month, which is inside the 74% Business margin.
+Margins, from `cost_model.py` (price | cost | margin, SAR per month):
+
+| Add-on | Price | Cost | Margin |
+|---|---|---|---|
+| Protect, Starter 5k / 10k / 25k / 50k | 100 / 200 / 500 / 1,000 | 10 / 14 / 29 / 48 | 90–95% |
+| Protect, Business S / M / L | 500 / 1,000 / 2,000 | 19 / 39 / 77 | 96% |
+| Protect, Enterprise S | 1,500 | 579 | 61% |
+| Assist, 100 extra requests | 75 | 28 | 63% |
+| Agent Pack, Business | 750 | 19 | 98% |
+
+- Pooled-cell Protect costs SAR 579 a month whatever the uptake, so two Business S subscribers cover it. The Starter and Business costs above assume 60 subscribers per cell; below that, the cell is still covered after the second sale.
+- **Enterprise:** including Protect in every Enterprise size would take Enterprise S from 59% to 51%, under the 55% target. So Protect is an add-on on Enterprise S and included in M and L. With the full Assist quota, Enterprise S lands at 57%, and M and L at 54%. M and L are one point under target; we accept that because Protect is our headline difference from Ping, and the saving levers in the [costs HLD](../architecture/hld-managed-services-costs.md#10-saving-levers) (Ampere A1, Oracle annual commit) recover it.
+- At full quota, Assist costs a Business tenant SAR 84 a month, well inside the 73–76% Business margin.
 
 ---
 

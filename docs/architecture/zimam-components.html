@@ -111,7 +111,7 @@
 
   <figure>
     <div class="scroll">
-      <svg class="dg" viewBox="0 0 1420 1290" role="img" aria-label="Zimam component diagram. Customer admins sign up in the portal; the Zimam API stores the tenant and starts the plan in Lago billing, which charges through a Saudi payment gateway and reports invoices to ZATCA. Cells in OCI Riyadh only call out to the platform: the cell agent pulls new tenants and creates realms in the shared Keycloak (Starter) or deploys per-tenant Keycloak instances through the Keycloak Operator (Business). Dedicated cells serve one Enterprise or Gov customer with private access and customer-held keys. End users log in through the cell edge. Keycloak calls Nafath, SMS and email OTP, and customer identity providers. Backups and replicas go to OCI Jeddah for disaster recovery.">
+      <svg class="dg" viewBox="0 0 1420 1470" role="img" aria-label="Zimam component diagram. Customer admins sign up in the portal; the Zimam API stores the tenant and starts the plan in Lago billing, which charges through a Saudi payment gateway and reports invoices to ZATCA. Cells in OCI Riyadh only call out to the platform: the cell agent pulls new tenants and creates realms in the shared Keycloak (Starter) or deploys per-tenant Keycloak instances through the Keycloak Operator (Business). Dedicated cells serve one Enterprise or Gov customer with private access and customer-held keys. End users log in through the cell edge. Keycloak calls Nafath, SMS and email OTP, and customer identity providers. Backups and replicas go to OCI Jeddah for disaster recovery. In Phase 2, a risk service in every cell scores logins for Zimam Protect, trained on OCI Data Science, and an AI gateway with an MCP server in the control plane calls OCI Generative AI in Riyadh for the Zimam Assist copilot.">
         <defs>
           <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
             <path class="head" d="M0,0 L10,5 L0,10 z"/>
@@ -219,6 +219,29 @@
   <path d="M12 16h.01" /></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
   <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+  <path d="M20 3v4" />
+  <path d="M22 5h-4" />
+  <path d="M4 17v2" />
+  <path d="M5 18H3" /></symbol>
+<symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8" />
+  <rect width="16" height="12" x="4" y="8" rx="2" />
+  <path d="M2 14h2" />
+  <path d="M20 14h2" />
+  <path d="M15 13v2" />
+  <path d="M9 13v2" /></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4" />
+  <path d="M3.34 19a10 10 0 1 1 17.32 0" /></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2" />
+  <rect width="6" height="6" x="9" y="9" rx="1" />
+  <path d="M15 2v2" />
+  <path d="M15 20v2" />
+  <path d="M2 15h2" />
+  <path d="M2 9h2" />
+  <path d="M20 15h2" />
+  <path d="M20 9h2" />
+  <path d="M9 2v2" />
+  <path d="M9 20v2" /></symbol>
         </defs>
 <g><rect class="bx" x="20" y="84" width="184" height="108" rx="10"/><rect class="tile" x="90.0" y="94" width="44" height="44" rx="10"/><use class="ic" href="#i-users" x="98.0" y="102" width="28" height="28"/><text class="t" x="112.0" y="156" text-anchor="middle">Customer admins</text><text class="tool" x="112.0" y="171" text-anchor="middle">portal · API · Terraform</text><text class="why" x="112.0" y="185" text-anchor="middle">manage their own realms</text></g>
 <g><rect class="bx" x="20" y="214" width="184" height="108" rx="10"/><rect class="tile" x="90.0" y="224" width="44" height="44" rx="10"/><use class="ic" href="#i-user-cog" x="98.0" y="232" width="28" height="28"/><text class="t" x="112.0" y="286" text-anchor="middle">Zimam ops team</text><text class="tool" x="112.0" y="301" text-anchor="middle">on-call · support</text><text class="why" x="112.0" y="315" text-anchor="middle">no direct prod logins</text></g>
@@ -306,6 +329,15 @@
 <g><rect class="cost" x="604.0" y="1082.0" width="244.0" height="36" rx="11"/><use class="ci" href="#i-tag" x="613.0" y="1094" width="12" height="12"/><text class="ct" x="631.0" y="1097.0">Cell base USD 1,629 / mo</text><text class="ct" x="631.0" y="1111.0">+ per Business S 88 · M 177 · L 412</text></g>
 <g><rect class="cost" x="1198.0" y="1005.0" width="202.0" height="50" rx="11"/><use class="ci" href="#i-tag" x="1207.0" y="1024" width="12" height="12"/><text class="ct" x="1225.0" y="1020.0">Dedicated incl. DR, USD / mo</text><text class="ct" x="1225.0" y="1034.0">S 1,230 · M 2,593 · L 5,074</text><text class="ct" x="1225.0" y="1048.0">Gov options + 4,881</text></g>
 <g><rect class="cost" x="586.0" y="1140.0" width="274.0" height="22" rx="11.0"/><use class="ci" href="#i-tag" x="595.0" y="1145" width="12" height="12"/><text class="ct" x="613.0" y="1155.0">Standby S 298 · M 587 · L 1,301 USD / mo</text></g>
+<rect class="zone" x="240" y="1300" width="920" height="140" rx="14"/><use class="ic" href="#i-sparkles" x="256" y="1312" width="16" height="16"/><text class="zt" x="280" y="1325">AI · PHASE 2 · OCI RIYADH, NO DATA LEAVES THE KINGDOM</text>
+<g><rect class="bx" x="264" y="1346" width="200" height="64" rx="10"/><rect class="tile" x="276" y="1358.0" width="40" height="40" rx="9"/><use class="ic" href="#i-gauge" x="284" y="1366.0" width="24" height="24"/><text class="t" x="328" y="1375.0">Zimam Protect</text><text class="tool" x="328" y="1391.0">risk service in every cell</text></g>
+<g><rect class="bx" x="488" y="1346" width="200" height="64" rx="10"/><rect class="tile" x="500" y="1358.0" width="40" height="40" rx="9"/><use class="ic" href="#i-cpu" x="508" y="1366.0" width="24" height="24"/><text class="t" x="552" y="1375.0">OCI Data Science</text><text class="tool" x="552" y="1391.0">trains risk model, CPU</text></g>
+<g><rect class="bx" x="712" y="1346" width="200" height="64" rx="10"/><rect class="tile" x="724" y="1358.0" width="40" height="40" rx="9"/><use class="ic" href="#i-bot" x="732" y="1366.0" width="24" height="24"/><text class="t" x="776" y="1375.0">AI gateway + MCP</text><text class="tool" x="776" y="1391.0">Zimam API · redaction</text></g>
+<g><rect class="bx" x="936" y="1346" width="200" height="64" rx="10"/><rect class="tile" x="948" y="1358.0" width="40" height="40" rx="9"/><use class="ic" href="#i-sparkles" x="956" y="1366.0" width="24" height="24"/><text class="t" x="1000" y="1375.0">OCI Generative AI</text><text class="tool" x="1000" y="1391.0">Riyadh · Command A</text></g>
+<path class="ar" d="M488,1378 H466" marker-end="url(#ah)"/><text class="lbl" x="476" y="1340" text-anchor="middle">model</text>
+<path class="ar" d="M912,1378 H934" marker-end="url(#ah)"/><text class="lbl" x="924" y="1340" text-anchor="middle">prompts</text>
+<text class="lbl" x="264" y="1430">Keycloak asks Protect for a score in 50 ms; no LLM decides a login. Assist is unavailable in Jeddah DR; logins are not.</text>
+<g><rect class="cost" x="854.0" y="1422.0" width="298.0" height="36" rx="11"/><use class="ci" href="#i-tag" x="863.0" y="1434" width="12" height="12"/><text class="ct" x="881.0" y="1437.0">Protect 154 / cell · Assist 0.075 / request</text><text class="ct" x="881.0" y="1451.0">Self-hosted A10 GPU 1,468 / region, USD / mo</text></g>
       </svg>
     </div>
     <figcaption>
@@ -358,6 +390,13 @@
           <tr><td class="need">Policy as code</td><td class="tool">OCI Core Landing Zone · Checkov · OPA</td><td>CIS-aligned foundation; insecure infrastructure is blocked before apply</td><td><span class="chip oci">OCI</span> <span class="chip">Open source</span></td></tr>
           <tr><td class="need">Public status page</td><td class="tool">Upptime or similar</td><td>Every competitor reviewed publishes one; buyers expect it</td><td><span class="chip">Open source</span></td></tr>
           <tr><td class="need">Disaster recovery</td><td class="tool">Object Storage replication · PostgreSQL replica in Jeddah</td><td>Off-region backups for every tier; warm standby for Enterprise and the Business DR add-on</td><td><span class="chip oci">OCI managed</span></td></tr>
+
+          <tr class="grp"><th colspan="4">AI, Phase 2 (see docs/product/ai-strategy.md)</th></tr>
+          <tr><td class="need">Risk-based login (Zimam Protect)</td><td class="tool">Keycloak Authenticator + Event Listener SPIs · Quarkus risk service · OCI Cache</td><td>Scores every login in under 50 ms with rules, then ML. Steps up to passkey, OTP or Nafath. Runs in each cell with local GeoIP, Tor and breached-password data, so nothing leaves the cell and no LLM decides a login.</td><td><span class="chip build">Build</span> <span class="chip oci">OCI</span></td></tr>
+          <tr><td class="need">Model training</td><td class="tool">OCI Data Science</td><td>Scheduled CPU jobs in the same region; each Gov cell trains only on its own data. (OCI AI Anomaly Detection was retired in March 2025.)</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Admin copilot (Zimam Assist) and MCP server</td><td class="tool">AI gateway in the Zimam API · Quarkus MCP</td><td>Redacts personal data, enforces quotas, logs prompts. Every config change is a diff the admin approves. The MCP server lets customers use their own AI client at no LLM cost to us.</td><td><span class="chip build">Build</span></td></tr>
+          <tr><td class="need">LLM</td><td class="tool">OCI Generative AI (Riyadh) · Cohere Command A</td><td>The only on-demand LLM inside the Kingdom today. Not offered in Jeddah, so Assist pauses during DR. Self-hosted ALLaM or Qwen on an A10 GPU above about 20,000 requests a month.</td><td><span class="chip oci">OCI managed</span></td></tr>
+          <tr><td class="need">Identity for AI agents (Agent Pack)</td><td class="tool">Keycloak MCP authorization, token exchange, CIBA, DPoP</td><td>Upstream Keycloak 26.x already has the building blocks; Zimam adds the portal wizard, approvals and agent audit. Preview until upstream marks CIMD and delegation supported.</td><td><span class="chip">Open source</span> <span class="chip build">Build UX</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -377,6 +416,20 @@
       <table>
         <thead><tr><th>Plan</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
         <tbody><tr><td class="need">Starter 5k MAU</td><td class="num">290</td><td class="num">17</td><td class="num">94%</td></tr><tr><td class="need">Starter 10k MAU</td><td class="num">490</td><td class="num">26</td><td class="num">95%</td></tr><tr><td class="need">Starter 25k MAU</td><td class="num">990</td><td class="num">52</td><td class="num">95%</td></tr><tr><td class="need">Starter 50k MAU</td><td class="num">1,690</td><td class="num">86</td><td class="num">95%</td></tr><tr><td class="need">Business S</td><td class="num">1,500</td><td class="num">397</td><td class="num">74%</td></tr><tr><td class="need">Business M</td><td class="num">3,000</td><td class="num">729</td><td class="num">76%</td></tr><tr><td class="need">Business L</td><td class="num">6,000</td><td class="num">1,611</td><td class="num">73%</td></tr><tr><td class="need">Business S DR add-on</td><td class="num">500</td><td class="num">158</td><td class="num">68%</td></tr><tr><td class="need">Business M DR add-on</td><td class="num">1,000</td><td class="num">317</td><td class="num">68%</td></tr><tr><td class="need">Business L DR add-on</td><td class="num">2,000</td><td class="num">621</td><td class="num">69%</td></tr><tr><td class="need">Enterprise S (DR included)</td><td class="num">11,250</td><td class="num">4,613</td><td class="num">59%</td></tr><tr><td class="need">Enterprise M (DR included)</td><td class="num">24,000</td><td class="num">9,723</td><td class="num">59%</td></tr><tr><td class="need">Enterprise L (DR included)</td><td class="num">45,000</td><td class="num">19,029</td><td class="num">58%</td></tr><tr><td class="need">Gov: dedicated HSM vault</td><td class="num">13,500</td><td class="num">10,194</td><td class="num">24%</td></tr><tr><td class="need">Gov: dedicated Network Firewall</td><td class="num">10,000</td><td class="num">7,528</td><td class="num">25%</td></tr><tr><td class="need">Gov: FastConnect 1 Gbps</td><td class="num">1,500</td><td class="num">582</td><td class="num">61%</td></tr></tbody>
+      </table>
+    </div>
+    <h2>AI add-ons (Phase 2)</h2>
+    <p class="lede">From <code>AI_BLOCKS</code> and <code>ai_book()</code> in <code>cost_model.py</code>; design in <code>docs/product/ai-strategy.md</code>. Assist costs USD 0.075 (SAR 0.28) per request on OCI Generative AI.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>AI building block</th><th>What's in it</th><th class="num">USD / mo</th><th class="num">SAR / mo</th></tr></thead>
+        <tbody><tr><td class="need">Zimam Protect, pooled cell</td><td class="">Risk service 2 pods, E5 1 OCPU / 4 GB; OCI Cache 2 GB (velocity counters); Block volume 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords); Training, OCI Data Science (~40 h of E5 2 OCPU / 16 GB); Jeddah standby: 1 risk pod, 1 GB cache, datasets</td><td class="num">154</td><td class="num">579</td></tr><tr><td class="need">Zimam Protect, Enterprise S cell</td><td class="">Risk service 2 pods, E5 1 OCPU / 4 GB; OCI Cache 2 GB (velocity counters); Block volume 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords); Training, OCI Data Science (~40 h of E5 2 OCPU / 16 GB); Jeddah standby: 1 risk pod, 1 GB cache, datasets</td><td class="num">154</td><td class="num">579</td></tr><tr><td class="need">Zimam Protect, Enterprise M cell</td><td class="">Risk service 2 pods, E5 2 OCPU / 8 GB; OCI Cache 2 GB (velocity counters); Block volume 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords); Training, OCI Data Science (~40 h of E5 2 OCPU / 16 GB); Jeddah standby: 1 risk pod, 1 GB cache, datasets</td><td class="num">258</td><td class="num">969</td></tr><tr><td class="need">Zimam Protect, Enterprise L cell</td><td class="">Risk service 4 pods, E5 2 OCPU / 8 GB; OCI Cache 2 GB (velocity counters); Block volume 50 GB (GeoIP, ASN, Tor lists, Pwned Passwords); Training, OCI Data Science (~40 h of E5 2 OCPU / 16 GB); Jeddah standby: 1 risk pod, 1 GB cache, datasets</td><td class="num">397</td><td class="num">1,489</td></tr><tr><td class="need">Self-hosted model, per region</td><td class="">1 x A10 GPU, 200 GB volume; pays off above 19,611 Assist requests a month</td><td class="num">1,468</td><td class="num">5,507</td></tr></tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>AI add-on</th><th class="num">Price SAR / mo</th><th class="num">Infra cost SAR / mo</th><th class="num">Gross margin</th></tr></thead>
+        <tbody><tr><td class="need">Protect, Starter 5k</td><td class="num">100</td><td class="num">10</td><td class="num">90%</td></tr><tr><td class="need">Protect, Starter 10k</td><td class="num">200</td><td class="num">14</td><td class="num">93%</td></tr><tr><td class="need">Protect, Starter 25k</td><td class="num">500</td><td class="num">29</td><td class="num">94%</td></tr><tr><td class="need">Protect, Starter 50k</td><td class="num">1,000</td><td class="num">48</td><td class="num">95%</td></tr><tr><td class="need">Protect, Business S</td><td class="num">500</td><td class="num">19</td><td class="num">96%</td></tr><tr><td class="need">Protect, Business M</td><td class="num">1,000</td><td class="num">39</td><td class="num">96%</td></tr><tr><td class="need">Protect, Business L</td><td class="num">2,000</td><td class="num">77</td><td class="num">96%</td></tr><tr><td class="need">Protect, Enterprise S</td><td class="num">1,500</td><td class="num">579</td><td class="num">61%</td></tr><tr><td class="need">Assist, 100 extra requests</td><td class="num">75</td><td class="num">28</td><td class="num">63%</td></tr><tr><td class="need">Agent Pack, Business (preview)</td><td class="num">750</td><td class="num">19</td><td class="num">98%</td></tr></tbody>
       </table>
     </div>
   </section>
