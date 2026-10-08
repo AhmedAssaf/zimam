@@ -307,8 +307,10 @@ Noisy-neighbour limits on pooled cells: per-realm rate limits at the edge, a max
 ## 12. Roadmap modules (out of MVP scope)
 
 1. Identity verification: Yakeen / Absher-style checks and eKYC
-2. Risk-based authentication and fraud signals
+2. Risk-based authentication and fraud signals (Zimam Protect, see [AI strategy](../product/ai-strategy.md#5-design-zimam-protect-risk-based-authentication))
 3. No-code login journey builder
 4. Fine-grained authorization (for example OpenFGA)
 5. Identity governance: access reviews, joiner-mover-leaver (for example midPoint)
 6. Managed LDAP directory and API gateway add-ons
+
+AI features across these modules (risk-based authentication, an admin copilot and MCP server, and identity for AI agents) are designed in the [AI strategy](../product/ai-strategy.md), together with competitor AI analysis and costs.
